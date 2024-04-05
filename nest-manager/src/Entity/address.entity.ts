@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { PeopleEntity } from "./people.entity";
 
 @Entity()
 export class AddressEntity {
@@ -7,7 +8,7 @@ export class AddressEntity {
   id: number;
 
   @Column()
-  cep: number;
+  cep: string;
 
   @Column()
   address: string;
@@ -26,4 +27,7 @@ export class AddressEntity {
 
   @Column()
   city: string
+
+  @ManyToOne(type => PeopleEntity, person => person.address, { cascade: true })
+  person: PeopleEntity;
 }

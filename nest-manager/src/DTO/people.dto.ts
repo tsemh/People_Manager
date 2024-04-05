@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length, IsString, ArrayMinSize, IsNotEmptyObject, ValidateNested} from "class-validator";
+import { IsNotEmpty, Length, IsString, ArrayMinSize, ValidateNested} from "class-validator";
 import { Type } from "class-transformer";
 import { AddressDTO } from "./address.dto";
 
@@ -17,7 +17,7 @@ export class PeopleDTO {
   readonly gender: string;
 
   @IsNotEmpty()
-  readonly birthdate: string;
+  readonly birthDate: string;
 
   @IsNotEmpty()
   @IsString({message: "Name must be a string!"})
@@ -26,8 +26,7 @@ export class PeopleDTO {
 
   @IsNotEmpty()
   @Type(() => AddressDTO)
-  @ArrayMinSize(1)
-  @IsNotEmptyObject()
+  @ArrayMinSize(1, { message: 'Address must not be empty' })
   @ValidateNested({ each: true })
   readonly address: AddressDTO[];
 }

@@ -1,28 +1,18 @@
+// app.module.ts
 import { Module } from '@nestjs/common';
-import { PeopleController } from './Controller/people.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './Module/user.module';
-import { PeopleModule } from './Module/people.module';
-import { AddressModule } from './Module/address.module';
-import { AddressController } from './Controller/address.controller';
-import { UserController } from './Controller/user.controller';
+import { UserModule } from './module/user.module';
+import { PeopleModule } from './module/people.module';
+import { AddressModule } from './module/address.module';
+import { DatabaseModule } from './module/database.module';
 
 @Module({
   imports: [
     AddressModule,
     PeopleModule,
     UserModule,
-    TypeOrmModule.forRoot({
-    type: 'sqlite',
-    database: 'db',
-    entities: [__dirname = '/**/*.entity{.ts,.js'],
-    synchronize: true
-  })
-],
-  controllers: [
-    PeopleController, 
-    AddressController, 
-    UserController],
+    DatabaseModule
+  ],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}

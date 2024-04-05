@@ -1,44 +1,48 @@
-import { IsNotEmpty, IsNumber, IsPositive, IsString, Length } from "class-validator";
+import { IsNotEmpty, IsNumber, IsPositive, IsString, Length, MaxLength, MinLength } from "class-validator";
 
 export class AddressDTO {
 
   readonly id: number;
 
   @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
-  @Length(8, 8)
-  readonly cep: number;
+  @IsString()
+  @MaxLength(8)
+  @MinLength(8)
+  readonly cep: string;
   
   @IsNotEmpty()
   @IsString({message: 'Name must be a string!'})
-  @Length(5, 100)  
+  @MaxLength(100)
+  @MinLength(5)
   readonly address: string;
 
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
-  @Length(1, 5)
   readonly number: number;
 
   @IsNotEmpty()
   @IsString({message: 'Name must be a string!'})
-  @Length(10, 100) 
+  @MaxLength(100)
+  @MinLength(5)
   readonly complement: string;
 
   @IsNotEmpty()
   @IsString({message: 'Name must be a string!'})
-  @Length(10, 100) 
+  @MaxLength(100)
+  @MinLength(10)
   readonly neighborhood: string;
 
   @IsNotEmpty()
   @IsString({message: 'Name must be a string!'})
-  @Length(5, 30) 
+  @MaxLength(30)
+  @MinLength(5)
   readonly state: string;
 
   @IsNotEmpty()
   @IsString({message: 'Name must be a string!'})
-  @Length(5, 100) 
+  @MaxLength(100)
+  @MinLength(5)
   readonly city: string
 
 }
