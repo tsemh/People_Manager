@@ -26,8 +26,13 @@ export class PeopleRepository {
     return this.repository.save(peopleEntity);
   }
 
-  async findAll(): Promise<PeopleEntity[]> {
-    return this.repository.find({ relations: ['address'] });
+  async findAll(page: number = 1, limit: number = 10): Promise<PeopleEntity[]> {
+    const skip = (page - 1) * limit;
+    return this.repository.find({
+      relations: ['address'],
+      skip: skip,
+      take: limit,
+    });
   }
 
   async findById(id: number): Promise<PeopleEntity> {
@@ -38,7 +43,8 @@ export class PeopleRepository {
     return existingPeople;
   }
 
-  async search(query: string | number): Promise<PeopleEntity[]> {
+  async search(query: string | number, page: number = 1, limit: number = 10): Promise<PeopleEntity[]> {
+    const skip = (page - 1) * limit;
     return await this.repository.createQueryBuilder('people')
       .leftJoinAndSelect('people.address', 'address')
       .where('people.name LIKE :query', { query: `%${query}%` })
@@ -52,6 +58,8 @@ export class PeopleRepository {
       .orWhere('address.neighborhood LIKE :query', { query: `%${query}%` })
       .orWhere('address.state LIKE :query', { query: `%${query}%` })
       .orWhere('address.city LIKE :query', { query: `%${query}%` })
+      .skip(skip)
+      .take(limit)
       .getMany();
   }
 

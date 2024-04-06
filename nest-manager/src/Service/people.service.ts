@@ -15,8 +15,12 @@ export class PeopleService {
     return await this.peopleRepository.save(newPeople);
   }
 
-  async findAllPeople(): Promise<PeopleEntity[]> {
-    return await this.peopleRepository.findAll();
+  async findAllPeople(page?: number, limit?: number): Promise<PeopleEntity[]> {
+    if (page !== undefined && limit !== undefined) {
+      return await this.peopleRepository.findAll(page, limit);
+    } else {
+      return await this.peopleRepository.findAll();
+    }
   }
 
   async findPeopleById(id: number): Promise<PeopleEntity> {
@@ -27,10 +31,10 @@ export class PeopleService {
     return existingPeople;
   }
 
-  async searchPeople(query: string | number): Promise<PeopleEntity[]> {
-    return await this.peopleRepository.search(query);
+  async searchPeople(query: string | number, page: number = 1, limit: number = 10): Promise<PeopleEntity[]> {
+    return await this.peopleRepository.search(query, page, limit);
   }
-
+  
   async updatePeople(id: number, updatedPeople: PeopleDTO): Promise<PeopleEntity> {
     return await this.peopleRepository.update(id, updatedPeople);
   }

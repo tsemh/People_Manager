@@ -13,13 +13,16 @@ export class PeopleController {
   }
 
   @Get()
-  async getAllPeople(): Promise<PeopleEntity[]> {
-    return await this.peopleService.findAllPeople();
+  async getAllPeople(@Query('page') page?: number, @Query('limit') limit?: number): Promise<PeopleEntity[]> {
+    return await this.peopleService.findAllPeople(page, limit);
   }
 
   @Get('search')
-  async searchPeople(@Query('query') query: string | number): Promise<PeopleEntity[]> {
-    return await this.peopleService.searchPeople(query);
+  async searchPeople(
+    @Query('query') query: string | number,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number): Promise<PeopleEntity[]> {
+    return await this.peopleService.searchPeople(query, page, limit);
   }
 
   @Get(':id')
