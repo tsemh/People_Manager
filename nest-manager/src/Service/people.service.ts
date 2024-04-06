@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PeopleDTO } from '../DTO/people.dto';
 import { PeopleEntity } from '../Entity/people.entity';
 import { PeopleRepository } from '../Repository/people.repository';
@@ -6,42 +6,73 @@ import { AddressService } from './address.service';
 
 @Injectable()
 export class PeopleService {
+  private readonly logger = new Logger(PeopleService.name);
+
   constructor(
     private readonly peopleRepository: PeopleRepository,
     private readonly addressService: AddressService
   ) {}
 
   async savePeople(newPeople: PeopleDTO): Promise<PeopleEntity> {
-    return await this.peopleRepository.save(newPeople);
+    try {
+      return await this.peopleRepository.save(newPeople);
+    } catch (error) {
+      this.logger.error(`Failed to save people: ${error.message}`);
+      throw new Error('Failed to save people.');
+    }
   }
 
   async findAllPeople(page?: number, limit?: number): Promise<PeopleEntity[]> {
-    if (page !== undefined && limit !== undefined) {
-      return await this.peopleRepository.findAll(page, limit);
-    } else {
-      return await this.peopleRepository.findAll();
+    try {
+      if (page !== undefined && limit !== undefined) {
+        return await this.peopleRepository.findAll(page, limit);
+      } else {
+        return await this.peopleRepository.findAll();
+      }
+    } catch (error) {
+      this.logger.error(`Failed to fetch all people: ${error.message}`);
+      throw new Error('Failed to fetch all people.');
     }
   }
 
   async findPeopleById(id: number): Promise<PeopleEntity> {
-    const existingPeople = await this.peopleRepository.findById(id);
-    if (!existingPeople) {
-      throw new NotFoundException(`People with ID ${id} not found.`);
+    try {
+      const existingPeople = await this.peopleRepository.findById(id);
+      if (!existingPeople) {
+        throw new NotFoundException(`People with ID ${id} not found.`);
+      }
+      return existingPeople;
+    } catch (error) {
+      this.logger.error(`Failed to fetch people by ID: ${error.message}`);
+      throw new NotFoundException('Failed to fetch people by ID.');
     }
-    return existingPeople;
   }
 
   async searchPeople(query: string | number, page: number = 1, limit: number = 10): Promise<PeopleEntity[]> {
-    return await this.peopleRepository.search(query, page, limit);
+    try {
+      return await this.peopleRepository.search(query, page, limit);
+    } catch (error) {
+      this.logger.error(`Failed to search people: ${error.message}`);
+      throw new Error('Failed to search people.');
+    }
   }
   
   async updatePeople(id: number, updatedPeople: PeopleDTO): Promise<PeopleEntity> {
-    return await this.peopleRepository.update(id, updatedPeople);
+    try {
+      return await this.peopleRepository.update(id, updatedPeople);
+    } catch (error) {
+      this.logger.error(`Failed to update people: ${error.message}`);
+      throw new Error('Failed to update people.');
+    }
   }
 
   async deletePeople(id: number): Promise<void> {
-    await this.addressService.deleteAddressesByPersonId(id);
-    await this.peopleRepository.delete(id);
+    try {
+      await this.addressService.deleteAddressesByPersonId(id);
+      await this.peopleRepository.delete(id);
+    } catch (error) {
+      this.logger.error(`Failed to delete people: ${error.message}`);
+      throw new Error('Failed to delete people.');
+    }
   }
-  
 }

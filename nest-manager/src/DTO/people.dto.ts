@@ -1,7 +1,7 @@
 import { IsNotEmpty, Length, IsString, ValidateNested, IsDate, MaxDate} from "class-validator";
 import { Type } from "class-transformer";
 import { AddressDTO } from "./address.dto";
-import { StringToDate } from "src/Decorator/StringToDate.decorator";
+import { StringToDate } from "src/Util/Decorator/StringToDate.decorator";
 
 export class PeopleDTO {
 
