@@ -1,0 +1,56 @@
+<div class="d-flex justify-content-evenly my-5">
+  <button class="btn btn-success">Add Person</button>
+</div>
+  
+  <table class="table table-hover">
+    <thead class="table-secondary">
+      <tr>
+        <th scope="col">Visualize</th>
+        <th scope="col"># Person ID</th>
+        <th scope="col">Person Name</th>
+        <th scope="col">Birth Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let  of ">
+        <th scope="row">
+          <button class="btn btn-outline-warning text-dark" >Entrar</button>
+        </th>
+        <td ></td>
+          <td></td>
+          <td></td>
+          <td class="btn-group">
+            <button class="btn btn-outline-secondary">Editar</button>
+            <button class="btn btn-outline-danger">Deletar</button>
+          </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #template>
+      <div class="modal-header">
+        <button type="button" class="btn-close close pull-right" aria-label="Close">
+        </button>
+    </div>
+
+    <div class="modal-body">
+    
+      <form>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label">Nome</label>
+          <input type="text" class="form-control" id="nome" formControlName="nome" >
+        </div>
+                
+        <div class="d-flex justify-content-end">
+          <div class="col-sm-6 d-flex justify-content-end">
+            <button type="submit" class="btn btn-success">Enviar</button>
+
+            <button type="submit" class="btn btn-success">Enviar</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+</ng-template>
+
+
