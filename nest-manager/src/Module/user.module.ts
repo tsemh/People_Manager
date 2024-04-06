@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from 'src/Controller/user.controller';
 import { UserEntity } from 'src/Entity/user.entity';
@@ -10,7 +10,8 @@ import { UserService } from 'src/Service/user.service';
     UserController
   ],
   providers: [
-    UserService
+    UserService,
+    Logger
   ]
 })
 export class UserModule {}

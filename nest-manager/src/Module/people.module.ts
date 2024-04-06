@@ -1,5 +1,5 @@
 import { AddressModule } from './address.module';
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PeopleController } from 'src/Controller/people.controller';
 import { PeopleEntity } from 'src/Entity/people.entity';
@@ -16,7 +16,8 @@ import { PeopleService } from 'src/Service/people.service';
   ],
   providers: [
     PeopleService,
-    PeopleRepository
+    PeopleRepository,
+    Logger
   ],
   exports: [PeopleRepository]
 })

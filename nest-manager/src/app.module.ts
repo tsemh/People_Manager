@@ -1,5 +1,5 @@
 // app.module.ts
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { UserModule } from './module/user.module';
 import { PeopleModule } from './module/people.module';
 import { AddressModule } from './module/address.module';

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressController } from 'src/Controller/address.controller';
 import { AddressEntity } from 'src/Entity/address.entity';
@@ -12,7 +12,8 @@ import { AddressService } from 'src/Service/address.service';
   ],
   providers: [
     AddressService,
-    AddressRepository
+    AddressRepository,
+    Logger
   ],
   exports: [
     AddressRepository,
