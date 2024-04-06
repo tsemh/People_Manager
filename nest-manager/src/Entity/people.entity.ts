@@ -14,7 +14,7 @@ export class PeopleEntity {
   gender: string;
 
   @Column()
-  birthDate: string;
+  birthDate: Date;
 
   @Column()
   maritalStatus: string

@@ -1,6 +1,7 @@
-import { IsNotEmpty, Length, IsString, ArrayMinSize, ValidateNested} from "class-validator";
+import { IsNotEmpty, Length, IsString, ValidateNested, IsDate, MaxDate} from "class-validator";
 import { Type } from "class-transformer";
 import { AddressDTO } from "./address.dto";
+import { StringToDate } from "src/Decorator/StringToDate.decorator";
 
 export class PeopleDTO {
 
@@ -17,7 +18,13 @@ export class PeopleDTO {
   readonly gender: string;
 
   @IsNotEmpty()
-  readonly birthDate: string;
+  @IsDate()
+  @StringToDate()
+  @MaxDate(new Date(), {
+    message: 'The birthDate must be before or equal to today\'s date.'
+  })    
+  readonly birthDate: Date;
+
 
   @IsNotEmpty()
   @IsString({message: "Name must be a string!"})

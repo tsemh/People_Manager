@@ -25,19 +25,7 @@ export class PeopleRepository {
     }
     return this.repository.save(peopleEntity);
   }
-  
-  async update(id: number, updatedPeople: PeopleDTO): Promise<PeopleEntity> {
-    const existingPeople = await this.repository.findOne({ where: { id } });
-    if (!existingPeople) {
-        throw new NotFoundException(`People with ID ${id} not found.`);
-    }
 
-    const existingAddress = existingPeople.address;
-    this.repository.merge(existingPeople, updatedPeople);
-    existingPeople.address = existingAddress;
-    return this.repository.save(existingPeople);
-}
-  
   async findAll(): Promise<PeopleEntity[]> {
     return this.repository.find({ relations: ['address'] });
   }
@@ -48,6 +36,35 @@ export class PeopleRepository {
       throw new NotFoundException(`People with ID ${id} not found.`);
     }
     return existingPeople;
+  }
+
+  async search(query: string | number): Promise<PeopleEntity[]> {
+    return await this.repository.createQueryBuilder('people')
+      .leftJoinAndSelect('people.address', 'address')
+      .where('people.name LIKE :query', { query: `%${query}%` })
+      .orWhere('people.gender LIKE :query', { query: `%${query}%` })
+      .orWhere('people.birthDate LIKE :query', { query: `%${query}%` })
+      .orWhere('people.maritalStatus LIKE :query', { query: `%${query}%` })
+      .orWhere('address.cep LIKE :query', { query: `%${query}%` })
+      .orWhere('address.address LIKE :query', { query: `%${query}%` })
+      .orWhere('address.number LIKE :query', { query: `%${query}%` })
+      .orWhere('address.complement LIKE :query', { query: `%${query}%` })
+      .orWhere('address.neighborhood LIKE :query', { query: `%${query}%` })
+      .orWhere('address.state LIKE :query', { query: `%${query}%` })
+      .orWhere('address.city LIKE :query', { query: `%${query}%` })
+      .getMany();
+  }
+
+  async update(id: number, updatedPeople: PeopleDTO): Promise<PeopleEntity> {
+    const existingPeople = await this.repository.findOne({ where: { id } });
+    if (!existingPeople) {
+      throw new NotFoundException(`People with ID ${id} not found.`);
+    }
+
+    const existingAddress = existingPeople.address;
+    this.repository.merge(existingPeople, updatedPeople);
+    existingPeople.address = existingAddress;
+    return this.repository.save(existingPeople);
   }
 
   async delete(id: number): Promise<void> {

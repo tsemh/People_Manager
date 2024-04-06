@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsPositive, IsString, Length, MaxLength, MinLength } from "class-validator";
+import { IsNotEmpty, IsNumber, IsPositive, IsString, MaxLength, MinLength } from "class-validator";
 import { PeopleDTO } from "./people.dto";
 import { Type } from "class-transformer";
 
@@ -47,7 +47,6 @@ export class AddressDTO {
   @MinLength(3)
   readonly city: string
 
-  @IsNotEmpty()
   @Type(() => PeopleDTO)
   readonly person: PeopleDTO;
 }

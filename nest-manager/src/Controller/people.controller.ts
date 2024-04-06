@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query } from '@nestjs/common';
 import { PeopleDTO } from '../DTO/people.dto';
 import { PeopleEntity } from '../Entity/people.entity';
 import { PeopleService } from '../Service/people.service';
@@ -7,19 +7,24 @@ import { PeopleService } from '../Service/people.service';
 export class PeopleController {
   constructor(private readonly peopleService: PeopleService) {}
 
+  @Post()
+  async postPeople(@Body() newPeople: PeopleDTO): Promise<PeopleEntity> {
+    return await this.peopleService.savePeople(newPeople); 
+  }
+
   @Get()
   async getAllPeople(): Promise<PeopleEntity[]> {
     return await this.peopleService.findAllPeople();
   }
 
+  @Get('search')
+  async searchPeople(@Query('query') query: string | number): Promise<PeopleEntity[]> {
+    return await this.peopleService.searchPeople(query);
+  }
+
   @Get(':id')
   async getPeopleById(@Param('id') id: number): Promise<PeopleEntity> {
     return await this.peopleService.findPeopleById(id);
-  }
-
-  @Post()
-  async postPeople(@Body() newPeople: PeopleDTO): Promise<PeopleEntity> {
-    return await this.peopleService.savePeople(newPeople); 
   }
 
   @Patch(':id')

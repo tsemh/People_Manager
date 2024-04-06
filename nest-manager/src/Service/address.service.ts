@@ -11,15 +11,6 @@ export class AddressService {
     return await this.addressRepository.save(newAddress);
   }
 
-  async updateAddress(id: number, updatedAddress: AddressDTO): Promise<AddressEntity> {
-    const existingAddress = await this.addressRepository.findById(id);
-    if (!existingAddress) {
-      throw new NotFoundException(`Address with ID ${id} not found.`);
-    }
-
-    return await this.addressRepository.update(id, updatedAddress);
-  }
-
   async getAllAddresses(): Promise<AddressEntity[]> {
     return await this.addressRepository.findAll();
   }
@@ -30,6 +21,15 @@ export class AddressService {
       throw new NotFoundException(`Address with ID ${id} not found.`);
     }
     return address;
+  }
+
+  async updateAddress(id: number, updatedAddress: AddressDTO): Promise<AddressEntity> {
+    const existingAddress = await this.addressRepository.findById(id);
+    if (!existingAddress) {
+      throw new NotFoundException(`Address with ID ${id} not found.`);
+    }
+
+    return await this.addressRepository.update(id, updatedAddress);
   }
 
   async deleteAddress(id: number): Promise<void> {
