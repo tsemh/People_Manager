@@ -24,9 +24,7 @@ export class PeopleDTO {
   @Length(3,100)
   readonly maritalStatus: string
 
-  @IsNotEmpty()
   @Type(() => AddressDTO)
-  @ArrayMinSize(1, { message: 'Address must not be empty' })
   @ValidateNested({ each: true })
   readonly address: AddressDTO[];
 }

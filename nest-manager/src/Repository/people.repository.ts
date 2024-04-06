@@ -16,7 +16,6 @@ export class PeopleRepository {
 
   async save(newPeople: PeopleDTO): Promise<PeopleEntity> {
     const peopleEntity = this.repository.create(newPeople);
-    
     if (newPeople.address) {
       const addressEntities = await Promise.all(newPeople.address.map(async addr => {
         const createdAddress = await this.addressRepository.save(addr);
@@ -24,20 +23,21 @@ export class PeopleRepository {
       }));
       peopleEntity.address = addressEntities;
     }
-  
     return this.repository.save(peopleEntity);
   }
   
   async update(id: number, updatedPeople: PeopleDTO): Promise<PeopleEntity> {
     const existingPeople = await this.repository.findOne({ where: { id } });
     if (!existingPeople) {
-      throw new NotFoundException(`People with ID ${id} not found.`);
+        throw new NotFoundException(`People with ID ${id} not found.`);
     }
 
+    const existingAddress = existingPeople.address;
     this.repository.merge(existingPeople, updatedPeople);
+    existingPeople.address = existingAddress;
     return this.repository.save(existingPeople);
-  }
-
+}
+  
   async findAll(): Promise<PeopleEntity[]> {
     return this.repository.find({ relations: ['address'] });
   }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AddressDTO } from '../DTO/address.dto';
@@ -22,10 +22,21 @@ export class AddressRepository {
       throw new NotFoundException(`Address with ID ${id} not found.`);
     }
   
-    this.repository.merge(existingAddress, updatedAddress);
+    const mutableAddress = { ...updatedAddress };
+  
+    delete mutableAddress.person;
+    delete mutableAddress.id;
+  
+    if (Object.keys(mutableAddress).length === 0) {
+      throw new BadRequestException("No address fields provided for update.");
+    }
+  
+    Object.assign(existingAddress, mutableAddress);
+  
     return this.repository.save(existingAddress);
   }
-
+  
+  
   async findAll(): Promise<AddressEntity[]> {
     return this.repository.find();
   }
@@ -36,6 +47,10 @@ export class AddressRepository {
       throw new NotFoundException(`Address with ID ${id} not found.`);
     }
     return existingAddress;
+  }
+
+    async findByPersonId(personId: number): Promise<AddressEntity[]> {
+    return this.repository.find({ where: { person: { id: personId } } });
   }
 
   async delete(id: number): Promise<void> {

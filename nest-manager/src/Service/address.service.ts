@@ -39,4 +39,15 @@ export class AddressService {
     }
     await this.addressRepository.delete(id);
   }
+
+  async deleteAddressesByPersonId(personId: number): Promise<void> {
+    const addresses = await this.addressRepository.findByPersonId(personId);
+
+    if (!addresses || addresses.length === 0) {
+      return;
+    }
+    for (const address of addresses) {
+      await this.addressRepository.delete(address.id);
+    }
+  }
 }

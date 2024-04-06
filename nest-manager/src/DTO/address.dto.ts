@@ -1,4 +1,6 @@
 import { IsNotEmpty, IsNumber, IsPositive, IsString, Length, MaxLength, MinLength } from "class-validator";
+import { PeopleDTO } from "./people.dto";
+import { Type } from "class-transformer";
 
 export class AddressDTO {
 
@@ -30,19 +32,22 @@ export class AddressDTO {
   @IsNotEmpty()
   @IsString({message: 'Name must be a string!'})
   @MaxLength(100)
-  @MinLength(10)
+  @MinLength(3)
   readonly neighborhood: string;
 
   @IsNotEmpty()
   @IsString({message: 'Name must be a string!'})
   @MaxLength(30)
-  @MinLength(5)
+  @MinLength(3)
   readonly state: string;
 
   @IsNotEmpty()
   @IsString({message: 'Name must be a string!'})
   @MaxLength(100)
-  @MinLength(5)
+  @MinLength(3)
   readonly city: string
 
+  @IsNotEmpty()
+  @Type(() => PeopleDTO)
+  readonly person: PeopleDTO;
 }

@@ -14,6 +14,9 @@ import { AddressService } from 'src/Service/address.service';
     AddressService,
     AddressRepository
   ],
-  exports: [AddressRepository]
+  exports: [
+    AddressRepository,
+    AddressService
+  ]
 
 })export class AddressModule {}
