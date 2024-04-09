@@ -24,13 +24,15 @@
       <div class="mb-3">
         <label class="form-label">Addresses</label>
         <select class="form-select" (change)="selectAddressField($event)">
-          <option *ngFor="let address of addressTitleAndId">{{ address.title }}</option>
+          <option>Tap to view your addresses</option>
+          <option *ngFor="let address of addressService.titleAndId">{{ address.title }}</option>
         </select>
       </div>
 
-      <div *ngIf="showAddressFields">
-        <app-address-form [parentForm]="peopleForm"></app-address-form>
+      <div *ngIf="showAddressFields && addressFormGroup">
+        <app-address-form [addressForm]="addressFormGroup"></app-address-form>
       </div>
+      
       <div *ngIf="formEnabled == true" class="btn-address-delete">
         <button type="button" class="btn btn-outline-success btn-new-address" (click)="newAddress(template)">New Address</button>
         <button type="button" class="btn btn-outline-danger btn-new-address">Delete Address</button>

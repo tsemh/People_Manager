@@ -88,7 +88,6 @@ export class DisplayComponent implements OnInit {
       this.peopleForm.reset();
       this.peopleForm.patchValue(people);
     }
-    console.log(this.addressService.titleAndId);
   }
   getAllPeople() {
     this.peopleService.getAll(this.page, this.limit).pipe(

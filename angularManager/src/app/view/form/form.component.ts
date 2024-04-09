@@ -1,10 +1,13 @@
 import { AddressService } from './../../Service/address.service';
 import { PeopleModel } from './../../Model/people.model';
 import { Component, Input, TemplateRef} from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { ModalService } from 'src/app/Service/modal.service';
 import { SubmitFormUtil } from 'src/app/Util/submit-form.util';
 import { TitleAndId } from 'src/app/Interface/title-and-id.interface';
+import { FormService } from 'src/app/Service/form.service';
+import { catchError, of } from 'rxjs';
+import { AddressModel } from 'src/app/Model/address.model';
 
 @Component({
   selector: 'app-form',
@@ -18,15 +21,14 @@ export class FormComponent {
   public showAddressFields: boolean = false;
   public inputsHaveBorder: boolean = false;
   public people?: PeopleModel;
-  public addressTitleAndId: TitleAndId[] = [];
   public addressIdSelected!: number;
 
+
   constructor(private modalService: ModalService,
-              private addressService: AddressService
+              public addressService: AddressService
   ) { }
 
   ngOnInit(): void {
-    this.addressTitleAndId = this.addressService.titleAndId;
   }
 
   enableForm() {
@@ -45,9 +47,18 @@ export class FormComponent {
     this.openModal(template);
   }
   selectAddressField(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedIndex = selectElement.selectedIndex;
+    this.clearAddressFields();
+    if (selectedIndex === 0) {
+      this.disableAddressFields();
+    } else {
+      this.addressIdSelect(event)
+      this.getAddressById(this.addressIdSelected);
+    }
     this.enableAddressFields();
-    this.addressIdSelect(event)
   }
+
   submitForm(event: Event) {
     SubmitFormUtil.handleSubmit(event);
   }
@@ -80,13 +91,37 @@ export class FormComponent {
   disableAddressFields() {
     this.showAddressFields = false;
   }
+  get addressFormGroup(): FormGroup | null {
+    return this.peopleForm ? this.peopleForm.get('address') as FormGroup : null;
+  }
+  clearAddressFields() {
+    if (this.addressFormGroup) {
+      this.addressFormGroup.reset();
+    }
+  }
   addressIdSelect(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
     const selectedIndex = selectElement.selectedIndex;
-    this.addressIdSelected = this.addressTitleAndId[selectedIndex].id;
-    console.log(this.addressIdSelected);
+    this.addressIdSelected = this.addressService.titleAndId[selectedIndex-1].id;
+    console.log(selectedIndex)
   }
-  save() {
-    console.log(this.peopleForm.value)
+  
+  getAddressById(id: number) {
+    this.addressService.getById(id).pipe(
+      catchError((error: any) => {
+        console.error(error);
+        return of(null);
+      })
+    ).subscribe({
+      next: (address: AddressModel | null) => {
+        if (address !== null) {
+          console.log('Person found by ID:', address);
+          this.peopleForm.get('address')?.patchValue(address);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error finding person by ID:', error);
+      }
+    });
   }
 }

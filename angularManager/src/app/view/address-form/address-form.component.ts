@@ -7,6 +7,6 @@ import { FormGroup } from '@angular/forms';
   styleUrls: ['./address-form.component.css']
 })
 export class AddressFormComponent {
-  @Input() parentForm!: FormGroup;
+  @Input() addressForm!: FormGroup;
 
 }

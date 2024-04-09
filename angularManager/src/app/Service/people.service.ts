@@ -8,9 +8,9 @@ import { PeopleModel } from '../Model/people.model';
   providedIn: 'root',
 })
 export class PeopleService {
-  constructor(private http: HttpClient) { }
-
+  
   private baseUrl: string = `${environment.baseUrl}/people`;
+  constructor(private http: HttpClient) { }
 
   getAll(page?: number, limit?: number): Observable<PeopleModel[]> {
     let params = new HttpParams();

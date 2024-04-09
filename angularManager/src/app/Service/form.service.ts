@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FormService {
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) { }
 
   createForm(): FormGroup {
     return this.fb.group({
@@ -14,22 +14,19 @@ export class FormService {
       gender: [''],
       birthDate: [''],
       maritalStatus: [''],
-      cep: [''],
-      addresses: this.fb.array([])
+      address: this.createAddressForm()
     });
   }
-  addAddress(form: FormGroup): void {
-    const addressFormGroup = this.fb.group({
-      id: [0],
+
+  private createAddressForm(): FormGroup {
+    return this.fb.group({
       cep: [''],
       address: [''],
       number: [0],
+      complement: [''],
       neighborhood: [''],
       state: [''],
-      city: [''],
-      complement: ['']
+      city: ['']
     });
-    (form.get('addresses') as FormArray).push(addressFormGroup);
   }
-  
 }
