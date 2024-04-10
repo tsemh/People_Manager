@@ -13,10 +13,19 @@ export class AddressService {
 
   private titleAndId: TitleAndId[] = [];
   private baseUrl: string = `${environment.baseUrl}/address`;
+  private addressInfo!:any;
+
   constructor(
     private http: HttpClient,
     private notificationService: NotificationService
   ) { }
+
+  get infoAddress():any {
+    return this.addressInfo;
+  }
+  set infoAddress(addressInfo: any) {
+    this.addressInfo = addressInfo;
+  }
 
   get idAndTitle():TitleAndId[] {
     return this.titleAndId;
@@ -27,7 +36,6 @@ export class AddressService {
     }
     this.titleAndId = novoValor;
   }
-  
 
   getById(id: number): Observable<AddressModel> {
     return this.http.get<AddressModel>(`${this.baseUrl}/${id}`);

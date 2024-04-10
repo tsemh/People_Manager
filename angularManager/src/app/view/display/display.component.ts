@@ -23,6 +23,7 @@ export class DisplayComponent implements OnInit {
   public page: number = 1;
   public limit: number = 5;
 
+
   constructor(
     private modalService: ModalService,
     private peopleService: PeopleService,
@@ -35,8 +36,10 @@ export class DisplayComponent implements OnInit {
   }
 
   newPeople(template: TemplateRef<any>) {
+    this.addressService.idAndTitle = [];
+    this.peopleForm.reset();
     this.enableForm();
-    this.openModal(template);
+    this.modalService.openPeopleModal(template);
   }
 
   enableForm() {
@@ -48,12 +51,8 @@ export class DisplayComponent implements OnInit {
     this.reloadPage();
   }
 
-  openModal(template: TemplateRef<any>) {
-    this.modalService.openModal(template);
-  }
-
   closeModal() {
-    this.modalService.modalRef?.hide();
+    this.modalService.peopleModal?.hide();
   }
 
   enablePersonInfo(people: PeopleModel) {
@@ -148,22 +147,6 @@ export class DisplayComponent implements OnInit {
     });
   }
 
-  postPeople(newPeople: PeopleModel) {
-    this.peopleService.post(newPeople).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (createdPeople: PeopleModel | null) => {
-        if (createdPeople !== null) {
-        }
-      },
-      error: (error: any) => {
-        console.error('Error creating new person:', error);
-      }
-    });
-  }
 
   updatePeople(id: number, updatedPeople: PeopleModel) {
     this.peopleService.update(id, updatedPeople).pipe(

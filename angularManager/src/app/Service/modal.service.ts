@@ -5,11 +5,22 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
   providedIn: 'root'
 })
 export class ModalService {
-  public modalRef?: BsModalRef;
+  public peopleModal?: BsModalRef;
+  public addressModal?: BsModalRef;
 
   constructor(private modalService: BsModalService) {  }
 
-  openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template);
+  openPeopleModal(template: TemplateRef<any>) {
+    this.peopleModal = this.modalService.show(template);
+  }
+  openAddressModal(template: TemplateRef<any>) {
+    this.addressModal = this.modalService.show(template);
+  }
+  closePeopleModal() {
+    this.peopleModal?.hide();
+  }
+
+  closeAddressModal() {
+    this.addressModal?.hide();
   }
 }
