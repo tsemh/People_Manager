@@ -1,5 +1,6 @@
-<div class="d-flex justify-content-end my-5">
+<div class="d-flex btn-top my-5">
   <button class="btn btn-outline-success" (click)="newPeople(template)">Add Person</button>
+  <button class="btn btn-outline-success getAll" (click)="getAllPeople()">Get All</button>
 </div>
 
 <section class="information">
@@ -9,11 +10,10 @@
   </div>
 
   <div class="people-list">
-    <form class="d-flex" role="search">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success" >Search</button>
-    </form>
-    
+    <div class="d-flex search-box">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" #SearchInput>
+      <button type="button" class="btn btn-outline-success" (click)="searchPeople(SearchInput.value)">Search</button>
+    </div>
     <table class="table table-hover">
       <thead class="table-secondary">
         <tr>

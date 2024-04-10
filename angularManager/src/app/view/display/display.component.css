@@ -8,7 +8,7 @@
 .people-list {
   width: 50%;
 }
-form {
+.search-box {
   margin-bottom: 30px;
 }
 .people-line {
@@ -19,4 +19,8 @@ form {
 }
 .table th {
   width: 33.33%;
+}
+.btn-top {
+  display: flex;
+  justify-content: space-between;
 }

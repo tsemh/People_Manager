@@ -3,14 +3,29 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { PeopleModel } from '../Model/people.model';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PeopleService {
   
+  private idSelected!: number;
   private baseUrl: string = `${environment.baseUrl}/people`;
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private notificationService: NotificationService
+  ) { }
+
+  get idSelect():number {
+    return this.idSelected;
+  }
+  set idSelect(novoValor: number) {
+    if (novoValor !== this.idSelected) {
+      this.notificationService.idSelectedChanged.next(novoValor);
+    }
+    this.idSelected = novoValor;
+  }
 
   getAll(page?: number, limit?: number): Observable<PeopleModel[]> {
     let params = new HttpParams();

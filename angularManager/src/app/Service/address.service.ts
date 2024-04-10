@@ -4,16 +4,30 @@ import { TitleAndId } from 'src/app/Interface/title-and-id.interface';
 import { environment } from 'src/environments/environment';
 import { AddressModel } from '../Model/address.model';
 import { HttpClient } from '@angular/common/http';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AddressService {
 
-  public titleAndId: TitleAndId[] = [];
+  private titleAndId: TitleAndId[] = [];
   private baseUrl: string = `${environment.baseUrl}/address`;
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private notificationService: NotificationService
+  ) { }
 
+  get idAndTitle():TitleAndId[] {
+    return this.titleAndId;
+  }
+  set idAndTitle(novoValor: TitleAndId[]) {
+    if (JSON.stringify(novoValor) !== JSON.stringify(this.titleAndId)) {
+      this.notificationService.titleAndIdChanged.next(novoValor);
+    }
+    this.titleAndId = novoValor;
+  }
+  
 
   getById(id: number): Observable<AddressModel> {
     return this.http.get<AddressModel>(`${this.baseUrl}/${id}`);

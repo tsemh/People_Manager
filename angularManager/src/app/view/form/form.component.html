@@ -25,7 +25,7 @@
         <label class="form-label">Addresses</label>
         <select class="form-select" (change)="selectAddressField($event)">
           <option>Tap to view your addresses</option>
-          <option *ngFor="let address of addressService.titleAndId">{{ address.title }}</option>
+          <option *ngFor="let address of addressService.idAndTitle">{{ address.title }}</option>
         </select>
       </div>
 

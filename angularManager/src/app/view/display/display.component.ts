@@ -63,6 +63,9 @@ export class DisplayComponent implements OnInit {
   enablePerson() {
     this.personEnabled = true;
   }
+  disablePerson() {
+    this.personEnabled = false
+  }
 
   enableInputBorder() {
     this.inputsHaveBorder = true;
@@ -75,21 +78,23 @@ export class DisplayComponent implements OnInit {
     window.location.reload();
   }
   addressTitleAndId(people: PeopleModel) {
-    this.addressService.titleAndId = [];
+    this.addressService.idAndTitle = [];
     people.addresses.forEach((address) => {
       const title = `${address.neighborhood} - ${address.number}`;
-      this.addressService.titleAndId.push({ id: address.id, title: title }); 
+      this.addressService.idAndTitle.push({ id: address.id, title: title }); 
     });
   }
   peopleSelect(people: PeopleModel) {
     this.peopleSelected = people;
     this.addressTitleAndId(people);
+    this.peopleService.idSelect = people.id;
     if (this.peopleForm) {
       this.peopleForm.reset();
       this.peopleForm.patchValue(people);
     }
   }
   getAllPeople() {
+    this.disablePerson();
     this.peopleService.getAll(this.page, this.limit).pipe(
       catchError((error: any) => {
         console.error(error);
@@ -116,7 +121,6 @@ export class DisplayComponent implements OnInit {
     ).subscribe({
       next: (person: PeopleModel | null) => {
         if (person !== null) {
-          console.log('Person found by ID:', person);
         }
       },
       error: (error: any) => {
@@ -126,6 +130,7 @@ export class DisplayComponent implements OnInit {
   }
 
   searchPeople(query: string | number) {
+    this.disablePerson();
     this.peopleService.search(query, this.page, this.limit).pipe(
       catchError((error: any) => {
         console.error(error);
@@ -134,7 +139,6 @@ export class DisplayComponent implements OnInit {
     ).subscribe({
       next: (people: PeopleModel[] | null) => {
         if (people !== null) {
-          console.log('People found by search query:', people);
           this.people = people;
         }
       },
@@ -153,7 +157,6 @@ export class DisplayComponent implements OnInit {
     ).subscribe({
       next: (createdPeople: PeopleModel | null) => {
         if (createdPeople !== null) {
-          console.log('New person created:', createdPeople);
         }
       },
       error: (error: any) => {
@@ -171,7 +174,6 @@ export class DisplayComponent implements OnInit {
     ).subscribe({
       next: (updatedPerson: PeopleModel | null) => {
         if (updatedPerson !== null) {
-          console.log('Person updated:', updatedPerson);
         }
       },
       error: (error: any) => {
@@ -188,7 +190,6 @@ export class DisplayComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        console.log('Person deleted with ID:', id);
       },
       error: (error: any) => {
         console.error('Error deleting person:', error);
