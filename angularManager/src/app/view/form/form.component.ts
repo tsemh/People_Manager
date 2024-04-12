@@ -1,15 +1,14 @@
 import { AddressService } from './../../Service/address.service';
 import { PeopleModel } from './../../Model/people.model';
 import { Component, Input, OnInit, TemplateRef } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { ModalService } from 'src/app/Service/modal.service';
 import { SubmitFormUtil } from 'src/app/Util/submit-form.util';
-import { TitleAndId } from 'src/app/Interface/title-and-id.interface';
-import { FormService } from 'src/app/Service/form.service';
-import { catchError, merge, of } from 'rxjs';
-import { AddressModel } from 'src/app/Model/address.model';
+import { merge } from 'rxjs';
 import { PeopleService } from 'src/app/Service/people.service';
 import { NotificationService } from 'src/app/Service/notification.service';
+import { FormService } from 'src/app/Service/form.service';
+import { MakeJasonUtil } from 'src/app/Util/make-json.util';
 
 @Component({
   selector: 'app-form',
@@ -28,17 +27,21 @@ export class FormComponent implements OnInit {
 
   constructor(
     private modalService: ModalService,
-    public addressService: AddressService,
     private notificationService: NotificationService,
-    private peopleService: PeopleService
+    private formService: FormService,
+    private makeJsonUtil: MakeJasonUtil,
 
-  ) { }
+    public addressService: AddressService,
+    private peopleService: PeopleService) { }
 
   ngOnInit(): void {
     merge(
       this.notificationService.idSelectedChanged,
       this.notificationService.titleAndIdChanged
     ).subscribe(() => this.disableAddressFields());
+  }
+  get addressFormGroup(): FormGroup | null {
+    return this.peopleForm ? this.peopleForm.get('address') as FormGroup : null;
   }
 
   enableForm() {
@@ -59,101 +62,124 @@ export class FormComponent implements OnInit {
   selectAddressField(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
     const selectedIndex = selectElement.selectedIndex;
+    
     this.clearAddressFields();
     if (selectedIndex === 0) {
       this.disableAddressFields();
     } else {
       this.addressIdSelect(selectedIndex)
-      this.getAddressById(this.addressIdSelected);
+      this.loadAddressDetails(this.addressIdSelected);
       this.enableAddressFields();
     }
+  }
+  
+  loadAddressDetails(addressId: number): void {
+    this.addressService.getById(addressId, this.peopleForm);
   }
 
   submitForm(event: Event) {
     SubmitFormUtil.handleSubmit(event);
   }
-  submitPeopleForm(template: TemplateRef<any>) {
-    const peopleInfo = this.grabInformationPeopleForm();
-    const addressInfo = [this.addressService.infoAddress ];
 
-    if (this.isPeopleInfoValid(peopleInfo)) {
-      if (this.isAddressInfoValid(addressInfo[0])) {
-        this.postPeople(this.makePeopleJson(peopleInfo, addressInfo))
-        this.modalService.closePeopleModal();
-      } else {
-        this.newAddress(template);
-        return;
-      }
+  submitPeopleForm(template: TemplateRef<any>) {
+    const peopleInfo = this.formService.grabInformationPeopleForm(this.peopleForm);
+    const addressArray = [this.addressService.infoAddress]; 
+    const addressInfo: any = {...this.addressService.infoAddress};
+    addressInfo.number = Number(addressInfo.number);
+  
+    if (this.isEditMode()) {
+      this.updatePeopleAndAddress(peopleInfo, addressInfo);
     } else {
-      console.error('Erro: Informações da pessoa não preenchidas corretamente.');
-      return;
+      if (this.isValidPeopleAndAddress(peopleInfo, addressArray[0], template)) {
+        this.createOrUpdatePeople(peopleInfo, addressInfo);
+      }
     }
   }
+  
+  isEditMode(): boolean {
+    return !!(this.peopleService.idSelect && this.peopleService.idSelect !== 0 && this.addressIdSelected && this.addressIdSelected !== 0);
+  }
+  
+  updatePeopleAndAddress(peopleInfo: any, addressInfo: any) {
+    this.peopleService.updatePeopleAndAddress(peopleInfo, addressInfo, this.addressIdSelected);
+    window.location.reload();
+  }
+  
+  isValidPeopleAndAddress(peopleInfo: any, addressInfo: any, template: TemplateRef<any>): boolean {
+    if (!this.isPeopleInfoValid(peopleInfo)) {
+      console.error('Erro: Informações da pessoa não preenchidas corretamente.');
+      return false;
+    }
+  
+    if (!this.isAddressInfoValid(addressInfo)) {
+      this.newAddress(template);
+      return false;
+    }
+  
+    return true;
+  }
+  
+  createOrUpdatePeople(peopleInfo: any, addressInfo: any) {
+    if (this.peopleService.idSelect && this.peopleService.idSelect !== 0) {
+      this.peopleService.update(peopleInfo);
+    } else {
+      this.peopleService.post(this.makeJsonUtil.makeJson(peopleInfo, [addressInfo]));
+    }
+  
+    window.location.reload();
+    this.modalService.closePeopleModal();
+  }
+  
 
   submitAddressForm() {
-    this.addressService.infoAddress = this.grabInformationAddressForm();
-
-    if (!this.isAddressInfoValid(this.addressService.infoAddress )) {
+    this.setAddressOnService();
+    const addressInfo = this.getAddressInfoFromForm();
+    console.log()
+    if (!this.isAddressInfoValid(addressInfo)) {
       console.error('Erro: Informações de endereço não preenchidas corretamente.');
       return;
     }
+  
+    if (this.peopleService.idSelect && this.peopleService.idSelect !== 0) {
+      this.createAddress(addressInfo);
+    }
+  
+    this.closeModalAndClearFields();
+  }
 
+  setAddressOnService() {
+    this.addressService.infoAddress = this.formService.grabInformationAddressForm(this.peopleForm);
+    console.log(this.addressService.infoAddress)
+  }
+
+  getAddressInfoFromForm(): any { //addresInfo
+    return this.formService.grabInformationAddressForm(this.peopleForm);
+  }
+ 
+  createAddress(addressInfo: any) { //addressInfo
+    this.addressService.post(addressInfo, this.peopleService.idSelect);
+  }
+  updateAddress(addressInfo: any){ //addressInfo
+    this.addressService.update(this.addressIdSelected, addressInfo)
+  }
+  closeModalAndClearFields() {
     this.modalService.closeAddressModal();
-    this.clearAddressFields()
+    this.clearAddressFields();
+  }
+
+  removeAddress() {
+    this.addressService.delete(this.addressIdSelected);
+    window.location.reload();
   }
 
   isAddressInfoValid(addressInfo: any): boolean {
     return addressInfo && addressInfo.cep && addressInfo.address;
   }
-  
+
 
   isPeopleInfoValid(peopleInfo: any): boolean {
     return peopleInfo.name && peopleInfo.gender && peopleInfo.birthDate && peopleInfo.maritalStatus;
   }
-
-  makePeopleJson(peopleInfo: any, addressInfo: any[]) {
-    return {
-      id: 0,
-      name: peopleInfo.name,
-      gender: peopleInfo.gender,
-      birthDate: peopleInfo.birthDate,
-      maritalStatus: peopleInfo.maritalStatus,
-      addresses: addressInfo.map(address => {
-        return {
-          id:0,
-          cep: address.cep,
-          address: address.address,
-          number: parseInt(address.number, 5),
-          complement: address.complement,
-          neighborhood: address.neighborhood,
-          state: address.state,
-          city: address.city
-        };
-      })
-    };
-  }
-  grabInformationPeopleForm() {
-    return {
-      name: this.peopleForm.get('name')?.value,
-      gender: this.peopleForm.get('gender')?.value,
-      birthDate: this.peopleForm.get('birthDate')?.value,
-      maritalStatus: this.peopleForm.get('maritalStatus')?.value
-    };
-  }
-
-  grabInformationAddressForm() {
-    const addressFormGroup = this.peopleForm.get('address') as FormGroup;
-    return {
-      cep: addressFormGroup.get('cep')?.value,
-      address: addressFormGroup.get('city')?.value,
-      number: addressFormGroup.get('number')?.value,
-      complement: addressFormGroup.get('complement')?.value,
-      neighborhood: addressFormGroup.get('neighborhood')?.value,
-      state: addressFormGroup.get('state')?.value,
-      city: addressFormGroup.get('city')?.value
-    };
-  }
-
 
   disableInput() {
     this.formEnabled = false;
@@ -177,9 +203,6 @@ export class FormComponent implements OnInit {
   disableAddressFields() {
     this.showAddressFields = false;
   }
-  get addressFormGroup(): FormGroup | null {
-    return this.peopleForm ? this.peopleForm.get('address') as FormGroup : null;
-  }
   clearAddressFields() {
     if (this.addressFormGroup) {
       this.addressFormGroup.reset();
@@ -191,38 +214,8 @@ export class FormComponent implements OnInit {
   closeAddressModal() {
     this.modalService.closeAddressModal();
   }
-
-  getAddressById(id: number) {
-    this.addressService.getById(id).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (address: AddressModel | null) => {
-        if (address !== null) {
-          this.peopleForm.get('address')?.patchValue(address);
-        }
-      },
-      error: (error: any) => {
-        console.error('Error finding person by ID:', error);
-      }
-    });
-  }
-  postPeople(newPeople: PeopleModel) {
-    this.peopleService.post(newPeople).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (createdPeople: PeopleModel | null) => {
-        if (createdPeople !== null) {
-        }
-      },
-      error: (error: any) => {
-        console.error('Error creating new person:', error);
-      }
-    });
+  validator(controlName: string, errorName: string) {
+    const control = this.peopleForm.get(controlName);
+    return control && control.touched && control.errors && control.errors[errorName];
   }
 }

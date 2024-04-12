@@ -1,10 +1,10 @@
+import { AddressController } from './../Controller/address.controller';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { TitleAndId } from 'src/app/Interface/title-and-id.interface';
-import { environment } from 'src/environments/environment';
-import { AddressModel } from '../Model/address.model';
-import { HttpClient } from '@angular/common/http';
 import { NotificationService } from './notification.service';
+import { AddressModel } from '../Model/address.model';
+import { catchError, of } from 'rxjs';
+import { FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +12,12 @@ import { NotificationService } from './notification.service';
 export class AddressService {
 
   private titleAndId: TitleAndId[] = [];
-  private baseUrl: string = `${environment.baseUrl}/address`;
   private addressInfo!:any;
 
   constructor(
-    private http: HttpClient,
-    private notificationService: NotificationService
-  ) { }
+    private notificationService: NotificationService,
+
+    private addressController: AddressController) { }
 
   get infoAddress():any {
     return this.addressInfo;
@@ -37,19 +36,64 @@ export class AddressService {
     this.titleAndId = novoValor;
   }
 
-  getById(id: number): Observable<AddressModel> {
-    return this.http.get<AddressModel>(`${this.baseUrl}/${id}`);
+  update(addressId: number, addressInfo: any) {
+    this.addressController.update(addressId, addressInfo)
+    .subscribe({
+      next: (updatedAddress: AddressModel | null) => {
+        if (updatedAddress !== null) {
+          console.log('Endereço atualizado com sucesso:', updatedAddress);
+        }
+      },
+      error: (error: any) => {
+        console.error('Erro ao atualizar endereço:', error);
+      }
+    });
   }
-
-  save(newAddress: AddressModel): Observable<AddressModel> {
-    return this.http.post<AddressModel>(this.baseUrl, newAddress);
+  post(newAddress: AddressModel, personId: number) {
+    this.addressController.post(newAddress, personId).pipe(
+      catchError((error: any) => {
+        console.error(error);
+        return of(null);
+      })
+    ).subscribe({
+      next: (createAddress: AddressModel | null) => {
+        if (createAddress !== null) {
+        }
+      },
+      error: (error: any) => {
+        console.error('Error creating new person:', error);
+      }
+    });
   }
-
-  update(id: number, updatedAddress: AddressModel): Observable<AddressModel> {
-    return this.http.patch<AddressModel>(`${this.baseUrl}/${id}`, updatedAddress);
+  delete(id: number) {
+    this.addressController.delete(id).pipe(
+      catchError((error: any) => {
+        console.error(error);
+        return of(null);
+      })
+    ).subscribe({
+      next: () => {
+      },
+      error: (error: any) => {
+        console.error('Error deleting person:', error);
+      }
+    });
   }
-
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  getById(id: number, peopleForm: FormGroup) {
+    this.addressController.getById(id).pipe(
+      catchError((error: any) => {
+        console.error(error);
+        return of(null);
+      })
+    ).subscribe({
+      next: (address: AddressModel | null) => {
+        if (address !== null) {
+          peopleForm.get('address')?.patchValue(address);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error finding person by ID:', error);
+      }
+    });
   }
 }

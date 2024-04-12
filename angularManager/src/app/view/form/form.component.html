@@ -7,19 +7,21 @@
     <div class="form-content">
       <div class="mb-3">
         <label for="nameLabel" class="form-label">Name</label>
-        <input type="text" class="form-control" formControlName="name" [class.input-border]="inputsHaveBorder">
+        <input type="text" class="form-control" formControlName="name" [class.input-border]="inputsHaveBorder" maxlength="30">
       </div>
       <div class="mb-3">
         <label for="gender" class="form-label">Gender</label>
-        <input type="text" class="form-control" formControlName="gender" [class.input-border]="inputsHaveBorder">
+        <input type="text" class="form-control" formControlName="gender" [class.input-border]="inputsHaveBorder" maxlength="15">
       </div>
       <div class="mb-3">
         <label for="birthLabel" class="form-label">Birth Date</label>
-        <input type="text" class="form-control" formControlName="birthDate" [class.input-border]="inputsHaveBorder">
+        <input type="text" class="form-control" formControlName="birthDate" [class.input-border]="inputsHaveBorder" maxlength="10"
+        >
       </div>
       <div class="mb-3">
         <label for="maritalLabel" class="form-label">Marital Status</label>
-        <input type="text" class="form-control" formControlName="maritalStatus" [class.input-border]="inputsHaveBorder">
+        <input type="text" class="form-control" formControlName="maritalStatus" [class.input-border]="inputsHaveBorder" maxlength="15"
+        >
       </div>
       <div class="mb-3">
         <label class="form-label">Addresses</label>
@@ -35,7 +37,7 @@
       
       <div *ngIf="formEnabled == true" class="btn-address-delete">
         <button type="button" class="btn btn-outline-success btn-new-address" (click)="newAddress(template)">New Address</button>
-        <button type="button" class="btn btn-outline-danger btn-new-address">Delete Address</button>
+        <button type="button" class="btn btn-outline-danger btn-new-address" (click)="removeAddress()">Delete Address</button>
       </div>
     
       <div *ngIf="formEnabled == true" class="btn-submit-cancel">

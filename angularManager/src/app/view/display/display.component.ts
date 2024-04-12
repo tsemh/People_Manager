@@ -4,8 +4,6 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { PeopleModel } from 'src/app/Model/people.model';
 import { ModalService } from 'src/app/Service/modal.service';
 import { PeopleService } from 'src/app/Service/people.service';
-import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -18,7 +16,7 @@ export class DisplayComponent implements OnInit {
   public formEnabled!: boolean;
   public inputsHaveBorder!: boolean;
   public people: PeopleModel[] = [];
-  public peopleSelected!: PeopleModel;
+  public peopleSelected: PeopleModel | null = null;
   public peopleForm: FormGroup = this.formService.createForm();
   public page: number = 1;
   public limit: number = 5;
@@ -33,12 +31,17 @@ export class DisplayComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllPeople();
+    this.subscribeToPeople();
   }
 
+
   newPeople(template: TemplateRef<any>) {
+    this.peopleSelected = null;
+    this.peopleService.idSelect = 0;
     this.addressService.idAndTitle = [];
     this.peopleForm.reset();
-    this.enableForm();
+    this.disablePerson()
+    this.enableInput();
     this.modalService.openPeopleModal(template);
   }
 
@@ -46,8 +49,8 @@ export class DisplayComponent implements OnInit {
     this.enableInput();
     this.enableInputBorder();
   }
-  btnDelete(id:number) {
-    this.deletePeople(id);
+  btnDelete(id: number) {
+    this.peopleService.delete(id);
     this.reloadPage();
   }
 
@@ -80,7 +83,7 @@ export class DisplayComponent implements OnInit {
     this.addressService.idAndTitle = [];
     people.addresses.forEach((address) => {
       const title = `${address.neighborhood} - ${address.number}`;
-      this.addressService.idAndTitle.push({ id: address.id, title: title }); 
+      this.addressService.idAndTitle.push({ id: address.id, title: title });
     });
   }
   peopleSelect(people: PeopleModel) {
@@ -92,91 +95,18 @@ export class DisplayComponent implements OnInit {
       this.peopleForm.patchValue(people);
     }
   }
-  getAllPeople() {
-    this.disablePerson();
-    this.peopleService.getAll(this.page, this.limit).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (people: PeopleModel[] | null) => {
-        if (people !== null) {
-          this.people = people;
-        }
-      },
-      error: (error: any) => {
-        console.error(error);
-      }
-    });
-  }
-
-  getById(id: number) {
-    this.peopleService.getById(id).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (person: PeopleModel | null) => {
-        if (person !== null) {
-        }
-      },
-      error: (error: any) => {
-        console.error('Error finding person by ID:', error);
-      }
-    });
-  }
 
   searchPeople(query: string | number) {
     this.disablePerson();
-    this.peopleService.search(query, this.page, this.limit).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (people: PeopleModel[] | null) => {
-        if (people !== null) {
-          this.people = people;
-        }
-      },
-      error: (error: any) => {
-        console.error('Error searching for people:', error);
-      }
-    });
+    this.peopleService.search(query, this.page, this.limit);
   }
-
-
-  updatePeople(id: number, updatedPeople: PeopleModel) {
-    this.peopleService.update(id, updatedPeople).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (updatedPerson: PeopleModel | null) => {
-        if (updatedPerson !== null) {
-        }
-      },
-      error: (error: any) => {
-        console.error('Error updating person:', error);
-      }
-    });
+  getAllPeople() {
+    this.disablePerson();
+    this.peopleService.getAll(this.page, this.limit);
   }
-
-  deletePeople(id: number) {
-    this.peopleService.delete(id).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: () => {
-      },
-      error: (error: any) => {
-        console.error('Error deleting person:', error);
-      }
+  subscribeToPeople() {
+    this.peopleService.people$.subscribe(people => {
+      this.people = people;
     });
   }
 }
