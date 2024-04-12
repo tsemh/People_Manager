@@ -28,7 +28,7 @@ export class AddressEntity {
   @Column()
   city: string
 
-  @ManyToOne(type => PeopleEntity, person => person.address)
-  @JoinColumn({ name: "person_id" })
+  @ManyToOne(type => PeopleEntity, person => person.addresses, { onDelete: 'CASCADE', cascade: ["insert"] })
+  @JoinColumn({ name: "person_id"})
   person: PeopleEntity;
 }

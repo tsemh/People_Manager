@@ -8,9 +8,8 @@ import { PeopleService } from 'src/Service/people.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PeopleEntity]), 
-    AddressModule
-],
+    TypeOrmModule.forFeature([PeopleEntity]),
+  ],
   controllers: [
     PeopleController
   ],

@@ -4,7 +4,7 @@ import { Type } from "class-transformer";
 
 export class AddressDTO {
 
-  readonly id: number;
+  readonly id?: number;
 
   @IsNotEmpty()
   @IsString()

@@ -33,10 +33,10 @@ export class AddressController {
     }
   }
 
-  @Post()
-  async saveAddress(@Body() newAddress: AddressDTO): Promise<AddressEntity> {
+  @Post(':personId')
+  async saveAddress(@Body() newAddress: AddressDTO, @Param('personId') personId: number): Promise<AddressEntity> {
     try {
-      const savedAddress = await this.addressService.saveAddress(newAddress);
+      const savedAddress = await this.addressService.saveAddress(newAddress, personId);
       return savedAddress;
     } catch (error) {
       if (error.response && error.response.statusCode === 400) {
@@ -65,7 +65,6 @@ export class AddressController {
   async deleteAddress(@Param('id') id: number): Promise<void> {
     try {
       await this.addressService.deleteAddress(id);
-      throw new HttpException('Address deleted successfully', HttpStatus.NO_CONTENT);
     } catch (error) {
       if (error instanceof EntityNotFoundError) {
         throw new HttpException('Address not found', HttpStatus.NOT_FOUND);

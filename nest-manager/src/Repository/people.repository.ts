@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { PeopleDTO } from '../DTO/people.dto';
 import { PeopleEntity } from '../Entity/people.entity';
 import { AddressRepository } from './address.repositry';
+import { AddressDTO } from 'src/DTO/address.dto';
 
 @Injectable()
 export class PeopleRepository {
@@ -13,31 +14,35 @@ export class PeopleRepository {
     @InjectRepository(PeopleEntity)
     private readonly repository: Repository<PeopleEntity>,
 
-    private readonly addressRepository: AddressRepository
   ) { }
 
   async save(newPeople: PeopleDTO): Promise<PeopleEntity> {
     try {
-      const peopleEntity = this.repository.create(newPeople);
-      if (newPeople.address) {
-        const addressEntities = await Promise.all(newPeople.address.map(async addr => {
-          const createdAddress = await this.addressRepository.save(addr);
-          return createdAddress;
-        }));
-        peopleEntity.address = addressEntities;
-      }
-      return await this.repository.save(peopleEntity);
+      const { id, addresses, ...peopleData } = newPeople;
+  
+      const addressesWithoutIds = addresses.map(address => {
+        const { id: addressId, ...addressData } = address;
+        return addressData;
+      });
+  
+      const peopleEntity = this.repository.create({
+        ...peopleData,
+        addresses: addressesWithoutIds,
+      });
+  
+      const savedPeople = await this.repository.save(peopleEntity);
+      return savedPeople;
     } catch (error) {
       this.logger.error(`Failed to save people: ${error.message}`);
       throw new Error('Failed to save people.');
     }
   }
-
+  
   async findAll(page: number = 1, limit: number = 10): Promise<PeopleEntity[]> {
     try {
       const skip = (page - 1) * limit;
       return await this.repository.find({
-        relations: ['address'],
+        relations: ['addresses'],
         skip: skip,
         take: limit,
       });
@@ -49,7 +54,7 @@ export class PeopleRepository {
 
   async findById(id: number): Promise<PeopleEntity> {
     try {
-      const existingPeople = await this.repository.findOne({ where: { id }, relations: ['address'] });
+      const existingPeople = await this.repository.findOne({ where: { id }, relations: ['addresses'] });
       if (!existingPeople) {
         throw new NotFoundException(`People with ID ${id} not found.`);
       }
@@ -64,7 +69,7 @@ export class PeopleRepository {
     try {
       const skip = (page - 1) * limit;
       return await this.repository.createQueryBuilder('people')
-        .leftJoinAndSelect('people.address', 'address')
+        .leftJoinAndSelect('people.addresses', 'address')
         .where('people.name LIKE :query', { query: `%${query}%` })
         .orWhere('people.gender LIKE :query', { query: `%${query}%` })
         .orWhere('people.birthDate LIKE :query', { query: `%${query}%` })
@@ -92,9 +97,9 @@ export class PeopleRepository {
         throw new NotFoundException(`People with ID ${id} not found.`);
       }
 
-      const existingAddress = existingPeople.address;
+      const existingAddress = existingPeople.addresses;
       this.repository.merge(existingPeople, updatedPeople);
-      existingPeople.address = existingAddress;
+      existingPeople.addresses = existingAddress;
       return await this.repository.save(existingPeople);
     } catch (error) {
       this.logger.error(`Failed to update people: ${error.message}`);

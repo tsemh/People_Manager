@@ -2,7 +2,6 @@ import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PeopleDTO } from '../DTO/people.dto';
 import { PeopleEntity } from '../Entity/people.entity';
 import { PeopleRepository } from '../Repository/people.repository';
-import { AddressService } from './address.service';
 
 @Injectable()
 export class PeopleService {
@@ -10,7 +9,6 @@ export class PeopleService {
 
   constructor(
     private readonly peopleRepository: PeopleRepository,
-    private readonly addressService: AddressService
   ) {}
 
   async savePeople(newPeople: PeopleDTO): Promise<PeopleEntity> {
@@ -68,7 +66,7 @@ export class PeopleService {
 
   async deletePeople(id: number): Promise<void> {
     try {
-      await this.addressService.deleteAddressesByPersonId(id);
+      //await this.addressService.deleteAddressesByPersonId(id);
       await this.peopleRepository.delete(id);
     } catch (error) {
       this.logger.error(`Failed to delete people: ${error.message}`);

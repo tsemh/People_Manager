@@ -19,6 +19,6 @@ export class PeopleEntity {
   @Column()
   maritalStatus: string
 
-  @OneToMany(type => AddressEntity, address => address.person)
-  address: AddressEntity[];
+  @OneToMany(type => AddressEntity, addresses => addresses.person, { cascade: true })
+  addresses: AddressEntity[];
 }

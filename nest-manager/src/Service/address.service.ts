@@ -9,9 +9,9 @@ export class AddressService {
 
   constructor(private readonly addressRepository: AddressRepository) {}
 
-  async saveAddress(newAddress: AddressDTO): Promise<AddressEntity> {
+  async saveAddress(newAddress: AddressDTO, personId: number): Promise<AddressEntity> {
     try {
-      return await this.addressRepository.save(newAddress);
+      return await this.addressRepository.save(newAddress, personId);
     } catch (error) {
       this.logger.error(`Failed to save address: ${error.message}`);
       throw new Error('Failed to save address.');

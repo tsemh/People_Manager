@@ -1,3 +1,4 @@
+import { PeopleRepository } from 'src/Repository/people.repository';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,13 +12,25 @@ export class AddressRepository {
 
   constructor(
     @InjectRepository(AddressEntity)
-    private readonly repository: Repository<AddressEntity>,
+    private readonly addressRepository: Repository<AddressEntity>,
+    private readonly peopleRepository: PeopleRepository 
   ) {}
 
-  async save(newAddress: AddressDTO): Promise<AddressEntity> {
+  async save(newAddress: AddressDTO, personId: number): Promise<AddressEntity> {
+
+    const { id, ...addressData } = newAddress;
+
     try {
-      const addressEntity = this.repository.create(newAddress);
-      return await this.repository.save(addressEntity);
+      const person = await this.peopleRepository.findById(personId);
+      if (!person) {
+        throw new NotFoundException(`Person with ID ${personId} not found.`);
+      }
+
+      const addressEntity = this.addressRepository.create(addressData);
+
+      addressEntity.person = person;
+
+      return await this.addressRepository.save(addressEntity);
     } catch (error) {
       this.logger.error(`Failed to save address: ${error.message}`);
       throw new Error('Failed to save address.');
@@ -26,7 +39,7 @@ export class AddressRepository {
 
   async findAll(): Promise<AddressEntity[]> {
     try {
-      return await this.repository.find();
+      return await this.addressRepository.find();
     } catch (error) {
       this.logger.error(`Failed to fetch addresses: ${error.message}`);
       throw new Error('Failed to fetch addresses.');
@@ -35,7 +48,7 @@ export class AddressRepository {
 
   async findById(id: number): Promise<AddressEntity> {
     try {
-      const existingAddress = await this.repository.findOne({ where: { id } });
+      const existingAddress = await this.addressRepository.findOne({ where: { id } });
       if (!existingAddress) {
         throw new NotFoundException(`Address with ID ${id} not found.`);
       }
@@ -48,7 +61,7 @@ export class AddressRepository {
 
   async findByPersonId(personId: number): Promise<AddressEntity[]> {
     try {
-      return await this.repository.find({ where: { person: { id: personId } } });
+      return await this.addressRepository.find({ where: { person: { id: personId } } });
     } catch (error) {
       this.logger.error(`Failed to fetch addresses by person ID: ${error.message}`);
       throw new Error('Failed to fetch addresses by person ID.');
@@ -57,7 +70,7 @@ export class AddressRepository {
 
   async update(id: number, updatedAddress: AddressDTO): Promise<AddressEntity> {
     try {
-      const existingAddress = await this.repository.findOne({ where: { id } });
+      const existingAddress = await this.addressRepository.findOne({ where: { id } });
       if (!existingAddress) {
         throw new NotFoundException(`Address with ID ${id} not found.`);
       }
@@ -73,7 +86,7 @@ export class AddressRepository {
 
       Object.assign(existingAddress, mutableAddress);
 
-      return await this.repository.save(existingAddress);
+      return await this.addressRepository.save(existingAddress);
     } catch (error) {
       this.logger.error(`Failed to update address: ${error.message}`);
       throw new Error('Failed to update address.');
@@ -82,7 +95,7 @@ export class AddressRepository {
 
   async delete(id: number): Promise<void> {
     try {
-      const result = await this.repository.delete(id);
+      const result = await this.addressRepository.delete(id);
       if (result.affected === 0) {
         throw new NotFoundException(`Address with ID ${id} not found.`);
       }

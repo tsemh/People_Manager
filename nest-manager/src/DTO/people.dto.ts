@@ -5,7 +5,7 @@ import { StringToDate } from "src/Util/Decorator/StringToDate.decorator";
 
 export class PeopleDTO {
 
-  readonly id: number;
+  readonly id?: number;
 
   @IsNotEmpty()
   @IsString({message: "Name must be a string!"})
@@ -33,5 +33,5 @@ export class PeopleDTO {
 
   @Type(() => AddressDTO)
   @ValidateNested({ each: true })
-  readonly address: AddressDTO[];
+  readonly addresses: AddressDTO[];
 }
