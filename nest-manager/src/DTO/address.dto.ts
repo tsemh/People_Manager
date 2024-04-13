@@ -8,14 +8,14 @@ export class AddressDTO {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(8)
-  @MinLength(8)
+  @MaxLength(9)
+  @MinLength(9)
   readonly cep: string;
   
   @IsNotEmpty()
-  @IsString({message: 'Name must be a string!'})
-  @MaxLength(100)
-  @MinLength(5)
+  @IsString({message: 'Address must be a string!'})
+  @MaxLength(30)
+  @MinLength(3)
   readonly address: string;
 
   @IsNotEmpty()
@@ -24,25 +24,25 @@ export class AddressDTO {
   readonly number: number;
 
   @IsNotEmpty()
-  @IsString({message: 'Name must be a string!'})
-  @MaxLength(100)
-  @MinLength(5)
+  @IsString({message: 'Complement must be a string!'})
+  @MaxLength(30)
+  @MinLength(3)
   readonly complement: string;
 
   @IsNotEmpty()
-  @IsString({message: 'Name must be a string!'})
+  @IsString({message: 'Neighborhood must be a string!'})
   @MaxLength(100)
   @MinLength(3)
   readonly neighborhood: string;
 
   @IsNotEmpty()
-  @IsString({message: 'Name must be a string!'})
+  @IsString({message: 'State must be a string!'})
   @MaxLength(30)
   @MinLength(3)
   readonly state: string;
 
   @IsNotEmpty()
-  @IsString({message: 'Name must be a string!'})
+  @IsString({message: 'City must be a string!'})
   @MaxLength(100)
   @MinLength(3)
   readonly city: string
