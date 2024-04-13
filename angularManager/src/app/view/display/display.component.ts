@@ -13,7 +13,7 @@ import { FormGroup } from '@angular/forms';
 })
 export class DisplayComponent implements OnInit {
   public personEnabled: boolean = false;
-  public formEnabled!: boolean;
+  public formEnabled: boolean = false
   public inputsHaveBorder!: boolean;
   public people: PeopleModel[] = [];
   public peopleSelected: PeopleModel | null = null;
@@ -30,6 +30,7 @@ export class DisplayComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.formService.applyDateFormat(this.peopleForm, 'birthDate');
     this.getAllPeople();
     this.subscribeToPeople();
   }
@@ -76,6 +77,9 @@ export class DisplayComponent implements OnInit {
   enableInput() {
     this.formEnabled = true;
   }
+  disableForm() {
+    this.formEnabled = false;
+  }
   reloadPage() {
     window.location.reload();
   }
@@ -87,6 +91,7 @@ export class DisplayComponent implements OnInit {
     });
   }
   peopleSelect(people: PeopleModel) {
+    this.disableForm();
     this.peopleSelected = people;
     this.addressTitleAndId(people);
     this.peopleService.idSelect = people.id;

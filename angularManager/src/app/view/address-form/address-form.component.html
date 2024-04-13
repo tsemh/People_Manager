@@ -1,40 +1,77 @@
-  <div [formGroup]="addressForm">
+<div [formGroup]="addressForm">
 
-    <div class="mb-3">
-      <label for="cepLabel" class="form-label">CEP</label>
-      <input type="text" class="form-control" formControlName="cep" maxlength="9">
+  <div class="mb-3">
+    <label for="cepLabel" class="form-label">CEP</label>
+    <input type="text" class="form-control" formControlName="cep" maxlength="9" (keypress)="disablePressText($event, 'cep')" placeholder="00000-000">
+    <div *ngIf="addressForm.get('cep')?.errors && addressForm.get('cep')?.touched" class="text-danger" >
+      <div *ngIf="addressForm.get('cep')?.errors?.['required']">CEP is required.</div>
+      <div *ngIf="addressForm.get('cep')?.errors?.['maxlength']">CEP must be at most 8 characters long.</div>
+      <div *ngIf="addressForm.get('cep')?.errors?.['minlength']">CEP must be at least 8 characters long.</div>
+      <div *ngIf="addressForm.get('cep')?.errors?.['onlyNumbers']">CEP must contain only numbers.</div>
     </div>
-    
-    <div class="double-input">
-      <div class="mb-3 bigger-input">
-        <label for="addressLabel" class="form-label">Address</label>
-        <input type="text" class="form-control" formControlName="address" maxlength="30">
+  </div>
+  
+  <div class="double-input">
+    <div class="mb-3 bigger-input">
+      <label for="addressLabel" class="form-label">Address</label>
+      <input type="text" class="form-control" formControlName="address" maxlength="30" (keypress)="disablePressNumber($event, 'address')">
+      <div *ngIf="addressForm.get('address')?.errors && addressForm.get('address')?.touched" class="text-danger">
+        <div *ngIf="addressForm.get('address')?.errors?.['required']">Address is required.</div>
+        <div *ngIf="addressForm.get('address')?.errors?.['maxlength']">Address must be at most 30 characters long.</div>
+        <div *ngIf="addressForm.get('address')?.errors?.['minlength']">Address must be at least 3 characters long.</div>
       </div>
-      <div class="mb-3 small-input">
-        <label for="numberLabel" class="form-label">Number</label>
-        <input type="text" class="form-control" formControlName="number" maxlength="5">
+    </div>
+    <div class="mb-3 small-input">
+      <label for="numberLabel" class="form-label">Number</label>
+      <input type="text" class="form-control" formControlName="number" maxlength="5" (keypress)="disablePressText($event, 'number')">
+      <div *ngIf="addressForm.get('number')?.errors && addressForm.get('number')?.touched" class="text-danger">
+        <div *ngIf="addressForm.get('number')?.errors?.['required']">Number is required.</div>
+        <div *ngIf="addressForm.get('number')?.errors?.['maxlength']">Number must be at most 5 characters long.</div>
+        <div *ngIf="addressForm.get('number')?.errors?.['minlength']">Number must be at least 3 characters long.</div>
+        <div *ngIf="addressForm.get('number')?.errors?.['onlyNumbers']">Number must contain only numbers.</div>
       </div>
     </div>
-    
-    <div class="mb-3">
-      <label for="neighborhoodLabel" class="form-label">Neighborhood</label>
-      <input type="text" class="form-control" formControlName="neighborhood" maxlength="30">
+  </div>
+  
+  <div class="mb-3">
+    <label for="neighborhoodLabel" class="form-label">Neighborhood</label>
+    <input type="text" class="form-control" formControlName="neighborhood" maxlength="30" (keypress)="disablePressNumber($event, 'neighborhood')">
+    <div *ngIf="addressForm.get('neighborhood')?.errors && addressForm.get('neighborhood')?.touched" class="text-danger">
+      <div *ngIf="addressForm.get('neighborhood')?.errors?.['required']">Neighborhood is required.</div>
+      <div *ngIf="addressForm.get('neighborhood')?.errors?.['maxlength']">Neighborhood must be at most 30 characters long.</div>
+      <div *ngIf="addressForm.get('neighborhood')?.errors?.['minlength']">Neighborhood must be at least 3 characters long.</div>
     </div>
-    
-    <div class="double-input">
-      <div class="mb-3">
+  </div>
+  
+  <div class="double-input">
+    <div class="mb-3">
       <label for="stateLabel" class="form-label">State</label>
-      <input type="text" class="form-control" formControlName="state" maxlength="15">
+      <input type="text" class="form-control" formControlName="state" maxlength="15" (keypress)="disablePressNumber($event, 'state')">
+      <div *ngIf="addressForm.get('state')?.errors && addressForm.get('state')?.touched" class="text-danger">
+        <div *ngIf="addressForm.get('state')?.errors?.['required']">State is required.</div>
+        <div *ngIf="addressForm.get('state')?.errors?.['maxlength']">State must be at most 15 characters long.</div>
+        <div *ngIf="addressForm.get('state')?.errors?.['minlength']">State must be at least 3 characters long.</div>
+      </div>
     </div>
     <div class="mb-3">
       <label for="cityLabel" class="form-label">City</label>
-      <input type="text" class="form-control" formControlName="city" maxlength="15">
+      <input type="text" class="form-control" formControlName="city" maxlength="15" (keypress)="disablePressNumber($event, 'city')">
+      <div *ngIf="addressForm.get('city')?.errors && addressForm.get('city')?.touched" class="text-danger">
+        <div *ngIf="addressForm.get('city')?.errors?.['required']">City is required.</div>
+        <div *ngIf="addressForm.get('city')?.errors?.['maxlength']">City must be at most 15 characters long.</div>
+        <div *ngIf="addressForm.get('city')?.errors?.['minlength']">City must be at least 3 characters long.</div>
+      </div>
     </div>
   </div>
   
   <div class="mb-3">
     <label for="complementLabel" class="form-label">Complement</label>
     <input type="text" class="form-control" formControlName="complement" maxlength="30">
+    <div *ngIf="addressForm.get('complement')?.errors && addressForm.get('complement')?.touched" class="text-danger">
+      <div *ngIf="addressForm.get('complement')?.errors?.['required']">Complement is required.</div>
+      <div *ngIf="addressForm.get('complement')?.errors?.['maxlength']">Complement must be at most 30 characters long.</div>
+      <div *ngIf="addressForm.get('complement')?.errors?.['minlength']">Complement must be at least 3 characters long.</div>
+    </div>
   </div>
   
 </div>

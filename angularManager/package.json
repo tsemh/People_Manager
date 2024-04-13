@@ -19,7 +19,9 @@
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
     "bootstrap": "^5.3.3",
+    "moment": "^2.30.1",
     "ngx-bootstrap": "^8.0.0",
+    "ngx-mask": "^17.0.7",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"

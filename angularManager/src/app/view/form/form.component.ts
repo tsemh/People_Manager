@@ -9,6 +9,7 @@ import { PeopleService } from 'src/app/Service/people.service';
 import { NotificationService } from 'src/app/Service/notification.service';
 import { FormService } from 'src/app/Service/form.service';
 import { MakeJasonUtil } from 'src/app/Util/make-json.util';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-form',
@@ -24,6 +25,11 @@ export class FormComponent implements OnInit {
   public people?: PeopleModel;
   public addressIdSelected!: number;
   public newPeopleData: any;
+  public newAddressOff: boolean = false;
+  public deleteOn: boolean = false;
+  public age: number = 0;
+  public daysUntilNextBirthday: number = 0;
+  public isBirthdayToday: boolean = false;
 
   constructor(
     private modalService: ModalService,
@@ -39,6 +45,7 @@ export class FormComponent implements OnInit {
       this.notificationService.idSelectedChanged,
       this.notificationService.titleAndIdChanged
     ).subscribe(() => this.disableAddressFields());
+    this.formService.validators(this.peopleForm);
   }
   get addressFormGroup(): FormGroup | null {
     return this.peopleForm ? this.peopleForm.get('address') as FormGroup : null;
@@ -47,6 +54,7 @@ export class FormComponent implements OnInit {
   enableForm() {
     this.enableInputBorder();
     this.enableInput();
+    this.enableDelete()
   }
 
   disableForm() {
@@ -107,7 +115,7 @@ export class FormComponent implements OnInit {
   
   isValidPeopleAndAddress(peopleInfo: any, addressInfo: any, template: TemplateRef<any>): boolean {
     if (!this.isPeopleInfoValid(peopleInfo)) {
-      console.error('Erro: Informações da pessoa não preenchidas corretamente.');
+      alert("The person's information was not filled in correctly");
       return false;
     }
   
@@ -124,32 +132,43 @@ export class FormComponent implements OnInit {
       this.peopleService.update(peopleInfo);
     } else {
       this.peopleService.post(this.makeJsonUtil.makeJson(peopleInfo, [addressInfo]));
+      this.calculateAge();
+      this.calculateDaysUntilNextBirthday();
+      this.modalService.closePeopleModal();
+      this.clearAddressFields();
+      this.showBirthdayAlert();
     }
   
     window.location.reload();
-    this.modalService.closePeopleModal();
   }
   
 
   submitAddressForm() {
     this.setAddressOnService();
     const addressInfo = this.getAddressInfoFromForm();
-    console.log()
     if (!this.isAddressInfoValid(addressInfo)) {
-      console.error('Erro: Informações de endereço não preenchidas corretamente.');
+      alert("The address's information was not filled in correctly");
       return;
     }
   
     if (this.peopleService.idSelect && this.peopleService.idSelect !== 0) {
       this.createAddress(addressInfo);
     }
-  
+    this.disableNewAddress();
     this.closeModalAndClearFields();
+  }
+
+  disableNewAddress() {
+    if(this.addressService.infoAddress) {
+      this.newAddressOff = true;
+    }
+  }
+  enableDelete() {
+    this.deleteOn = true;
   }
 
   setAddressOnService() {
     this.addressService.infoAddress = this.formService.grabInformationAddressForm(this.peopleForm);
-    console.log(this.addressService.infoAddress)
   }
 
   getAddressInfoFromForm(): any { //addresInfo
@@ -214,8 +233,41 @@ export class FormComponent implements OnInit {
   closeAddressModal() {
     this.modalService.closeAddressModal();
   }
-  validator(controlName: string, errorName: string) {
-    const control = this.peopleForm.get(controlName);
-    return control && control.touched && control.errors && control.errors[errorName];
+  disablePressNumber(event: any, fieldName: string) {
+    this.formService.disablePressNumber(event, fieldName)
+  }
+
+  disablePressText(event: any, fieldName: string) {
+    this.formService.disablePressText(event, fieldName)
+  }
+
+  calculateAge(): void {
+    const birthDate = this.peopleForm.get('birthDate')?.value;
+    if (birthDate) {
+      const today = moment();
+      const formattedBirthDate = moment(birthDate, 'YYYY-MM-DD');
+      this.age = today.diff(formattedBirthDate, 'years');
+    }
+  }
+
+  calculateDaysUntilNextBirthday(): void {
+    const birthDate = this.peopleForm.get('birthDate')?.value;
+    if (birthDate) {
+      const today = moment();
+      const formattedBirthDate = moment(birthDate, 'YYYY-MM-DD');
+      const nextBirthday = formattedBirthDate.clone().add(this.age + 1, 'years');
+      this.daysUntilNextBirthday = nextBirthday.diff(today, 'days');
+      this.isBirthdayToday = formattedBirthDate.month() === today.month() && formattedBirthDate.date() === today.date();
+    }
+  }
+
+  showBirthdayAlert() {
+    let message = `Você tem ${this.age} anos de idade.`;
+    if (this.isBirthdayToday) {
+      message += "\nParabéns pelo seu aniversário!";
+    } else {
+      message += `\nFaltam ${this.daysUntilNextBirthday} dias para o seu próximo aniversário.`;
+    }
+    alert(message);
   }
 }

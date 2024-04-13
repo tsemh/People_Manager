@@ -5,28 +5,32 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
   providedIn: 'root'
 })
 export class FormService {
-  constructor(private fb: FormBuilder) { }
 
+  public restrictedNumbers: string[] = ['name', 'gender', 'maritalStatus', 'address', 'neighborhood', 'state', 'city'];
+  public restrictedText: string[] = ['birthDate', 'cep', 'number'];
+
+  constructor(private fb: FormBuilder) { }
+  
   createForm(): FormGroup {
     return this.fb.group({
       id: [0],
-      name: ['',[Validators.required, Validators.maxLength(30)]],
-      gender: ['',[Validators.required, Validators.maxLength(15)]],
-      birthDate: ['',[Validators.required, Validators.maxLength(8), this.onlyNumbersValidator]],
-      maritalStatus: ['',[Validators.required, Validators.maxLength(15)]],
+      name: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      gender: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
+      birthDate: ['',[Validators.required, Validators.maxLength(10)]],
+      maritalStatus: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
       address: this.createAddressForm()
     });
   }
 
   private createAddressForm(): FormGroup {
     return this.fb.group({
-      cep: ['',[Validators.required, Validators.maxLength(8), this.onlyNumbersValidator]],
-      address: ['',[Validators.required, Validators.maxLength(30)]],
-      number: [0,[Validators.required, Validators.maxLength(5), this.onlyNumbersValidator]],
-      complement: ['',[Validators.required, Validators.maxLength(50)]],
-      neighborhood: ['',[Validators.required, Validators.maxLength(30)]],
-      state: ['',[Validators.required, Validators.maxLength(30)]],
-      city: ['', [Validators.required, Validators.maxLength(30)]]
+      cep: ['',[Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
+      address: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      number: [0,[Validators.required, Validators.minLength(3), Validators.maxLength(5)]],
+      complement: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      neighborhood: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      state: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      city: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]]
     });
   }
 
@@ -52,9 +56,76 @@ export class FormService {
     };
   }
 
-  onlyNumbersValidator(control: FormControl) {
-    const value = control.value;
-    const isNumber = /^\d+$/.test(value);
-    return isNumber ? null : { onlyNumbers: true };
+  validators(form: FormGroup) {
+    const controls = ['name', 'gender', 'birthDate', 'maritalStatus', 'address'];
+    controls.forEach(controlName => {
+      const control = form.get(controlName);
+      if (control) {
+        const errors = control.errors;
+        if (errors) {
+        }
+      }
+    });
+  }
+
+  disablePressNumber(event: any, fieldName: string) {
+    if (this.restrictedNumbers.includes(fieldName)) {
+      const inputValue = event.key;
+      if (!/^[a-zA-Z]*$/.test(inputValue)) {
+        event.preventDefault();
+      }
+    }
+  }
+
+  disablePressText(event: any, fieldName: string) {
+    if (this.restrictedText.includes(fieldName)) {
+      const inputValue = event.key;
+      if (!/^\d*$/.test(inputValue)) {
+        event.preventDefault();
+      }
+    }
+  }
+
+   applyDateFormat(form: FormGroup, fieldName: string) {
+    const control = form.get(fieldName);
+  
+    if (control) {
+      control.valueChanges.subscribe((value: string) => {
+        if (value) {
+          const formattedDate = this.formatDate(value);
+          control.patchValue(formattedDate, { emitEvent: false });
+        }
+      });
+    }
+  }
+  
+  private formatDate(date: string): string {
+    const cleanedValue = date.replace(/\D/g, '');
+      const formattedDate = cleanedValue
+      .slice(0, 8)
+      .replace(/^(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+  
+    return formattedDate;
+  }
+  applyCEPMask(form: FormGroup, fieldName: string) {
+    const control = form.get(fieldName);
+  
+    if (control) {
+      control.valueChanges.subscribe((value: string) => {
+        if (value) {
+          const formattedCEP = this.formatCEP(value);
+          control.patchValue(formattedCEP, { emitEvent: false });
+        }
+      });
+    }
+  }
+  
+  private formatCEP(cep: string): string {
+    const cleanedCEP = cep.replace(/\D/g, '');
+      const formattedCEP = cleanedCEP
+      .slice(0, 8)
+      .replace(/^(\d{5})(\d{3})/, '$1-$2');
+  
+    return formattedCEP;
   }
 }
