@@ -6,7 +6,7 @@
 <section class="information">
 
   <div class="person">
-    <app-form *ngIf="personEnabled == true" [peopleForm]="peopleForm" [formEnabled]="formEnabled"></app-form>
+    <app-form *ngIf="personEnabled == true" [peopleForm]="peopleForm" [formEnabled]="formEnabled" [updateOn]="updateOn"></app-form>
   </div>
 
   <div class="people-list">
@@ -22,7 +22,7 @@
           <th scope="col">Settings</th>
         </tr>
       </thead>
-      <tbody *ngFor="let person of people">
+      <tbody *ngFor="let person of people | paginate: { itemsPerPage: itemsPerPage, currentPage: page }">
         <tr class="people-line" (click)="enablePersonInfo(person)">
           <td>{{ person.id }}</td>
           <td>{{ person.name }}</td>
@@ -33,6 +33,16 @@
         <tr>
       </tbody>
     </table>
+    <div class="pagination">
+
+      <pagination-controls (pageChange)="onPageChange($event)"></pagination-controls>
+      
+      <div class="itemsPerPage">
+        <label for="itemsPerPage">Items Amount: </label>
+        <input type="number" class="itemsAmount" [value]="limit" (input)="updateLimit($event)">
+      </div>
+    </div>
+    
   </div>
 
 </section>

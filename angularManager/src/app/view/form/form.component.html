@@ -1,6 +1,6 @@
 <div class="person-area">
   <div class="btn-update">
-    <button *ngIf="formEnabled == false" type="button" class="btn btn-outline-secondary" (click)="enableForm()">Update</button>
+    <button *ngIf="formEnabled === false" type="button" class="btn btn-outline-secondary" (click)="enableForm()">Update</button>
   </div>
 
   <form [formGroup]="peopleForm" (submit)="submitForm($event)">

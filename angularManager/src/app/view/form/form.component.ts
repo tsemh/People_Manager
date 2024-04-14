@@ -20,6 +20,7 @@ export class FormComponent implements OnInit {
 
   @Input() formEnabled: boolean = false;
   @Input() peopleForm!: FormGroup;
+  @Input() updateOn: boolean = false;
   public showAddressFields: boolean = false;
   public inputsHaveBorder: boolean = false;
   public people?: PeopleModel;
@@ -54,7 +55,8 @@ export class FormComponent implements OnInit {
   enableForm() {
     this.enableInputBorder();
     this.enableInput();
-    this.enableDelete()
+    this.enableDelete();
+    this.enableUpdate();
   }
 
   disableForm() {
@@ -119,7 +121,7 @@ export class FormComponent implements OnInit {
       return false;
     }
   
-    if (!this.isAddressInfoValid(addressInfo)) {
+    if (!this.isAddressInfoValid(addressInfo) && this.updateOn === false) {
       this.newAddress(template);
       return false;
     }
@@ -239,6 +241,9 @@ export class FormComponent implements OnInit {
 
   disablePressText(event: any, fieldName: string) {
     this.formService.disablePressText(event, fieldName)
+  }
+  enableUpdate() {
+    this.updateOn = true;
   }
 
   calculateAge(): void {

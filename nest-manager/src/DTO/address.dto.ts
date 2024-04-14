@@ -38,7 +38,7 @@ export class AddressDTO {
   @IsNotEmpty()
   @IsString({message: 'State must be a string!'})
   @MaxLength(30)
-  @MinLength(3)
+  @MinLength(2)
   readonly state: string;
 
   @IsNotEmpty()

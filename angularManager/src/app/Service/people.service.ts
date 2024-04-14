@@ -4,6 +4,8 @@ import { BehaviorSubject, Observable, catchError, of } from 'rxjs';
 import { PeopleModel } from '../Model/people.model';
 import { NotificationService } from './notification.service';
 import { PeopleController } from '../Controller/people.controller';
+import { LoggerService } from './logger.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +20,8 @@ export class PeopleService {
     private notificationService: NotificationService,
 
     private peopleController: PeopleController,
-    private addressController: AddressController) { }
+    private addressController: AddressController,
+    private logger: LoggerService) { }
 
   get idSelect():number {
     return this.idSelected;
@@ -32,17 +35,14 @@ export class PeopleService {
 
   post(newPeople: PeopleModel) {
     this.peopleController.post(newPeople).pipe(
-      catchError((error: any) => {
-        console.error(error);
+      catchError((error: HttpErrorResponse) => {
+        this.logger.handleError(error);
+        this.notificationService.showError('Erro ao criar nova pessoa');
         return of(null);
       })
     ).subscribe({
-      next: (createdPeople: PeopleModel | null) => {
-        if (createdPeople !== null) {
-        }
-      },
       error: (error: any) => {
-        console.error('Error creating new person:', error);
+        console.error('Erro ao criar nova pessoa:', error);
       }
     });
   }
@@ -65,81 +65,92 @@ export class PeopleService {
 
   update(peopleInfo: any) {
     const peopleId = this.idSelect;
-    this.peopleController.update(peopleId, peopleInfo).subscribe({
-      next: (updatedPerson: PeopleModel | null) => {
-        if (updatedPerson !== null) {
+    this.peopleController.update(peopleId, peopleInfo)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.logger.handleError(error);
+          this.notificationService.showError('Erro ao atualizar pessoa');
+          return of(null);
+        })
+      )
+      .subscribe({
+        error: (error: any) => {
+          console.error('Erro ao atualizar pessoa:', error);
         }
-      },
-      error: (error: any) => {
-        console.error('Erro ao atualizar pessoa:', error);
-      }
-    });
+      });
   }
+
   getAll(page: number, limit: number) {
-    this.peopleController.getAll(page, limit).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (people: PeopleModel[] | null) => {
-        if (people !== null) {
-          this.peopleSubject.next(people);
+    this.peopleController.getAll(page, limit)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.logger.handleError(error);
+          this.notificationService.showError('Erro ao buscar pessoas');
+          return of(null);
+        })
+      )
+      .subscribe({
+        next: (people: PeopleModel[] | null) => {
+          if (people !== null) {
+            this.peopleSubject.next(people);
+          }
+        },
+        error: (error: any) => {
+          console.error('Erro ao buscar pessoas:', error);
         }
-      },
-      error: (error: any) => {
-        console.error(error);
-      }
-    });
+      });
   }
 
   getById(id: number) {
-    this.peopleController.getById(id).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (person: PeopleModel | null) => {
-        if (person !== null) {
+    this.peopleController.getById(id)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.logger.handleError(error);
+          this.notificationService.showError('Erro ao buscar pessoa por ID');
+          return of(null);
+        })
+      )
+      .subscribe({
+        error: (error: any) => {
+          console.error('Erro ao buscar pessoa por ID:', error);
         }
-      },
-      error: (error: any) => {
-        console.error('Error finding person by ID:', error);
-      }
-    });
+      });
   }
 
   search(query: string | number, page: number, limit: number) {
-    this.peopleController.search(query, page, limit).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (people: PeopleModel[] | null) => {
-        if (people !== null) {
-          this.peopleSubject.next(people);
+    this.peopleController.search(query, page, limit)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.logger.handleError(error);
+          this.notificationService.showError('Erro ao pesquisar pessoas');
+          return of(null);
+        })
+      )
+      .subscribe({
+        next: (people: PeopleModel[] | null) => {
+          if (people !== null) {
+            this.peopleSubject.next(people);
+          }
+        },
+        error: (error: any) => {
+          console.error('Erro ao pesquisar pessoas:', error);
         }
-      },
-      error: (error: any) => {
-        console.error('Error searching for people:', error);
-      }
-    });
+      });
   }
 
   delete(id: number) {
-    this.peopleController.delete(id).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: () => {
-      },
-      error: (error: any) => {
-        console.error('Error deleting person:', error);
-      }
-    });
+    this.peopleController.delete(id)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.logger.handleError(error);
+          this.notificationService.showError('Erro ao deletar pessoa');
+          return of(null);
+        })
+      )
+      .subscribe({
+        error: (error: any) => {
+          console.error('Erro ao deletar pessoa:', error);
+        }
+      });
   }
 }

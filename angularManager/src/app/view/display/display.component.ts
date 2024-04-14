@@ -6,6 +6,7 @@ import { ModalService } from 'src/app/Service/modal.service';
 import { PeopleService } from 'src/app/Service/people.service';
 import { FormGroup } from '@angular/forms';
 
+
 @Component({
   selector: 'app-display',
   templateUrl: './display.component.html',
@@ -19,8 +20,9 @@ export class DisplayComponent implements OnInit {
   public peopleSelected: PeopleModel | null = null;
   public peopleForm: FormGroup = this.formService.createForm();
   public page: number = 1;
-  public limit: number = 5;
-
+  public limit: number = 10;
+  public itemsPerPage = 5;
+  public updateOn = false;
 
   constructor(
     private modalService: ModalService,
@@ -34,15 +36,27 @@ export class DisplayComponent implements OnInit {
     this.getAllPeople();
     this.subscribeToPeople();
   }
-
+  onPageChange(pageNumber: number) {
+    this.page = pageNumber;
+  }
+  updateLimit(event: any) {
+    const newLimit = parseInt(event?.target?.value);
+    if (!isNaN(newLimit)) {
+      this.limit = newLimit;
+    } else {
+      this.limit = 10;
+    }
+    this.getAllPeople();
+  }
 
   newPeople(template: TemplateRef<any>) {
     this.peopleSelected = null;
     this.peopleService.idSelect = 0;
     this.addressService.idAndTitle = [];
     this.peopleForm.reset();
-    this.disablePerson()
+    this.disablePerson();
     this.enableInput();
+    this.updateOff();
     this.modalService.openPeopleModal(template);
   }
 
@@ -113,5 +127,8 @@ export class DisplayComponent implements OnInit {
     this.peopleService.people$.subscribe(people => {
       this.people = people;
     });
+  }
+  updateOff() {
+    this.updateOn = false;
   }
 }

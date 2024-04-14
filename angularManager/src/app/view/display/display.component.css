@@ -24,3 +24,13 @@
   display: flex;
   justify-content: space-between;
 }
+.itemsAmount {
+  width: 50px;
+  height: 30px;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.itemsAmount::-webkit-inner-spin-button,
+.itemsAmount::-webkit-outer-spin-button {
+  display: none;
+}

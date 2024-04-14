@@ -29,7 +29,7 @@ export class FormService {
       number: [0,[Validators.required, Validators.minLength(3), Validators.maxLength(5)]],
       complement: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
       neighborhood: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
-      state: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      state: ['',[Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
       city: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]]
     });
   }

@@ -1,10 +1,13 @@
-import { AddressController } from './../Controller/address.controller';
 import { Injectable } from '@angular/core';
 import { TitleAndId } from 'src/app/Interface/title-and-id.interface';
 import { NotificationService } from './notification.service';
 import { AddressModel } from '../Model/address.model';
-import { catchError, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
+import { AddressController } from './../Controller/address.controller';
+import { LoggerService } from './logger.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,21 +15,22 @@ import { FormGroup } from '@angular/forms';
 export class AddressService {
 
   private titleAndId: TitleAndId[] = [];
-  private addressInfo!:any;
+  private addressInfo!: any;
 
   constructor(
     private notificationService: NotificationService,
+    private addressController: AddressController,
+    private loggerService: LoggerService
+  ) { }
 
-    private addressController: AddressController) { }
-
-  get infoAddress():any {
+  get infoAddress(): any {
     return this.addressInfo;
   }
   set infoAddress(addressInfo: any) {
     this.addressInfo = addressInfo;
   }
 
-  get idAndTitle():TitleAndId[] {
+  get idAndTitle(): TitleAndId[] {
     return this.titleAndId;
   }
   set idAndTitle(novoValor: TitleAndId[]) {
@@ -38,62 +42,74 @@ export class AddressService {
 
   update(addressId: number, addressInfo: any) {
     this.addressController.update(addressId, addressInfo)
-    .subscribe({
-      next: (updatedAddress: AddressModel | null) => {
-        if (updatedAddress !== null) {
-          console.log('Endereço atualizado com sucesso:', updatedAddress);
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.loggerService.handleError(error);
+          this.notificationService.showError('Erro ao atualizar endereço');
+          return throwError(() => new Error ('Erro ao atualizar endereço'));
+        })
+      )
+      .subscribe({
+        next: (updatedAddress: AddressModel | null) => {
+          if (updatedAddress !== null) {
+            console.log('Endereço atualizado com sucesso:', updatedAddress);
+            this.notificationService.showSuccess('Endereço atualizado com sucesso');
+          }
         }
-      },
-      error: (error: any) => {
-        console.error('Erro ao atualizar endereço:', error);
-      }
-    });
+      });
   }
+  
   post(newAddress: AddressModel, personId: number) {
-    this.addressController.post(newAddress, personId).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (createAddress: AddressModel | null) => {
-        if (createAddress !== null) {
+    this.addressController.post(newAddress, personId)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.loggerService.handleError(error);
+          this.notificationService.showError('Erro ao criar novo endereço');
+          return throwError(() => new Error ('Erro ao criar novo endereço'));
+        })
+      )
+      .subscribe({
+        next: (createdAddress: AddressModel | null) => {
+          if (createdAddress !== null) {
+            console.log('Novo endereço criado com sucesso:', createdAddress);
+            this.notificationService.showSuccess('Novo endereço criado com sucesso');
+          }
         }
-      },
-      error: (error: any) => {
-        console.error('Error creating new person:', error);
-      }
-    });
+      });
   }
+  
   delete(id: number) {
-    this.addressController.delete(id).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: () => {
-      },
-      error: (error: any) => {
-        console.error('Error deleting person:', error);
-      }
-    });
-  }
-  getById(id: number, peopleForm: FormGroup) {
-    this.addressController.getById(id).pipe(
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    ).subscribe({
-      next: (address: AddressModel | null) => {
-        if (address !== null) {
-          peopleForm.get('address')?.patchValue(address);
+    this.addressController.delete(id)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.loggerService.handleError(error);
+          this.notificationService.showError('Erro ao excluir endereço');
+          return throwError(() => new Error ('Erro ao excluir endereço'));
+        })
+      )
+      .subscribe({
+        next: () => {
+          console.log('Endereço excluído com sucesso');
+          this.notificationService.showSuccess('Endereço excluído com sucesso');
         }
-      },
-      error: (error: any) => {
-        console.error('Error finding person by ID:', error);
-      }
-    });
+      });
+  }
+  
+  getById(id: number, peopleForm: FormGroup) {
+    this.addressController.getById(id)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.loggerService.handleError(error);
+          this.notificationService.showError('Erro ao encontrar endereço pelo ID');
+          return throwError(() => new Error ('Erro ao encontrar endereço pelo ID'));
+        })
+      )
+      .subscribe({
+        next: (address: AddressModel | null) => {
+          if (address !== null) {
+            peopleForm.get('address')?.patchValue(address);
+          }
+        }
+      });
   }
 }
