@@ -1,16 +1,19 @@
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { ViaCepModel } from "../Model/via-cep.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ViaCepController {
 
-  private cep?: string;
-  private baseUrl: string = `viacep.com.br/ws/${this.cep}/json/`;
+  private baseUrl: string = `https://viacep.com.br/ws`;
   constructor(
     private http: HttpClient,
   ) {}
 
+  getByCep(cep: string): Observable<ViaCepModel> {
+    return this.http.get<ViaCepModel>(`${this.baseUrl}/${cep}/json`);
+  }
 }

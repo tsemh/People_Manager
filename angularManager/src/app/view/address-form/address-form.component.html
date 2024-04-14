@@ -2,7 +2,7 @@
 
   <div class="mb-3">
     <label for="cepLabel" class="form-label">CEP</label>
-    <input type="text" class="form-control" formControlName="cep" maxlength="9" (keypress)="disablePressText($event, 'cep')" placeholder="00000-000">
+    <input type="text" class="form-control" formControlName="cep" maxlength="9" (keypress)="disablePressText($event, 'cep')" placeholder="00000-000" (blur)="searchAddress()">
     <div *ngIf="addressForm.get('cep')?.errors && addressForm.get('cep')?.touched" class="text-danger" >
       <div *ngIf="addressForm.get('cep')?.errors?.['required']">CEP is required.</div>
       <div *ngIf="addressForm.get('cep')?.errors?.['maxlength']">CEP must be at most 8 characters long.</div>

@@ -71,7 +71,7 @@ export class FormService {
   disablePressNumber(event: any, fieldName: string) {
     if (this.restrictedNumbers.includes(fieldName)) {
       const inputValue = event.key;
-      if (!/^[a-zA-Z]*$/.test(inputValue)) {
+      if (!/^[a-zA-Z\s]*$/.test(inputValue)) {
         event.preventDefault();
       }
     }
