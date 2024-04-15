@@ -17,7 +17,7 @@
       <input type="text" class="form-control" formControlName="address" maxlength="30" (keypress)="disablePressNumber($event, 'address')">
       <div *ngIf="addressForm.get('address')?.errors && addressForm.get('address')?.touched" class="text-danger">
         <div *ngIf="addressForm.get('address')?.errors?.['required']">Address is required.</div>
-        <div *ngIf="addressForm.get('address')?.errors?.['maxlength']">Address must be at most 30 characters long.</div>
+        <div *ngIf="addressForm.get('address')?.errors?.['maxlength']">Address must be at most 100 characters long.</div>
         <div *ngIf="addressForm.get('address')?.errors?.['minlength']">Address must be at least 2 characters long.</div>
       </div>
     </div>
@@ -38,7 +38,7 @@
     <input type="text" class="form-control" formControlName="neighborhood" maxlength="30" (keypress)="disablePressNumber($event, 'neighborhood')">
     <div *ngIf="addressForm.get('neighborhood')?.errors && addressForm.get('neighborhood')?.touched" class="text-danger">
       <div *ngIf="addressForm.get('neighborhood')?.errors?.['required']">Neighborhood is required.</div>
-      <div *ngIf="addressForm.get('neighborhood')?.errors?.['maxlength']">Neighborhood must be at most 30 characters long.</div>
+      <div *ngIf="addressForm.get('neighborhood')?.errors?.['maxlength']">Neighborhood must be at most 100 characters long.</div>
       <div *ngIf="addressForm.get('neighborhood')?.errors?.['minlength']">Neighborhood must be at least 3 characters long.</div>
     </div>
   </div>
@@ -49,7 +49,7 @@
       <input type="text" class="form-control" formControlName="state" maxlength="15" (keypress)="disablePressNumber($event, 'state')">
       <div *ngIf="addressForm.get('state')?.errors && addressForm.get('state')?.touched" class="text-danger">
         <div *ngIf="addressForm.get('state')?.errors?.['required']">State is required.</div>
-        <div *ngIf="addressForm.get('state')?.errors?.['maxlength']">State must be at most 15 characters long.</div>
+        <div *ngIf="addressForm.get('state')?.errors?.['maxlength']">State must be at most 30 characters long.</div>
         <div *ngIf="addressForm.get('state')?.errors?.['minlength']">State must be at least 3 characters long.</div>
       </div>
     </div>
@@ -58,7 +58,7 @@
       <input type="text" class="form-control" formControlName="city" maxlength="15" (keypress)="disablePressNumber($event, 'city')">
       <div *ngIf="addressForm.get('city')?.errors && addressForm.get('city')?.touched" class="text-danger">
         <div *ngIf="addressForm.get('city')?.errors?.['required']">City is required.</div>
-        <div *ngIf="addressForm.get('city')?.errors?.['maxlength']">City must be at most 15 characters long.</div>
+        <div *ngIf="addressForm.get('city')?.errors?.['maxlength']">City must be at most 30 characters long.</div>
         <div *ngIf="addressForm.get('city')?.errors?.['minlength']">City must be at least 3 characters long.</div>
       </div>
     </div>

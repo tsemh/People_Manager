@@ -14,7 +14,7 @@ export class AddressDTO {
   
   @IsNotEmpty()
   @IsString({message: 'Address must be a string!'})
-  @MaxLength(30)
+  @MaxLength(100)
   @MinLength(3)
   readonly address: string;
 
@@ -25,7 +25,7 @@ export class AddressDTO {
 
   @IsNotEmpty()
   @IsString({message: 'Complement must be a string!'})
-  @MaxLength(30)
+  @MaxLength(100)
   @MinLength(3)
   readonly complement: string;
 
@@ -43,7 +43,7 @@ export class AddressDTO {
 
   @IsNotEmpty()
   @IsString({message: 'City must be a string!'})
-  @MaxLength(100)
+  @MaxLength(30)
   @MinLength(3)
   readonly city: string
 

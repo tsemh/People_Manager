@@ -1,10 +1,10 @@
 import { AddressModel } from "./address.model";
 
-export class PeopleModel {
-  public id: number = 0;
-  public name: string = '';
-  public gender: string = '';
-  public birthDate: string = '';
-  public maritalStatus: string = '';
-  public addresses: AddressModel[] = [];
+export interface PeopleModel {
+  id: number;
+  name: string;
+  gender: string;
+  birthDate: string;
+  maritalStatus: string;
+  addresses: AddressModel[];
 }

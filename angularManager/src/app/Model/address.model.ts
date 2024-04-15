@@ -1,10 +1,10 @@
-export class AddressModel {
-  public id: number = 0;
-  public cep: string = '';
-  public address: string = '';
-  public number: number = 0;
-  public complement: string = '';
-  public neighborhood: string = '';
-  public state: string = '';
-  public city: string = '';
+export interface AddressModel {
+  id: number;
+  cep: string;
+  address: string;
+  number: number;
+  complement: string;
+  neighborhood: string;
+  state: string;
+  city: string;
 }

@@ -7,6 +7,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 export class ModalService {
   public peopleModal?: BsModalRef;
   public addressModal?: BsModalRef;
+  public loginModal?: BsModalRef;
 
   constructor(private modalService: BsModalService) {  }
 
@@ -16,11 +17,16 @@ export class ModalService {
   openAddressModal(template: TemplateRef<any>) {
     this.addressModal = this.modalService.show(template);
   }
+  openLoginModal(template: TemplateRef<any>) {
+    this.loginModal = this.modalService.show(template);
+  }
   closePeopleModal() {
     this.peopleModal?.hide();
   }
-
   closeAddressModal() {
     this.addressModal?.hide();
+  }
+  closeLoginModal() {
+    this.loginModal?.hide();
   }
 }

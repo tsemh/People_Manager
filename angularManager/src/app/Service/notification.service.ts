@@ -20,9 +20,11 @@ export class NotificationService {
 
   showSuccess(message: string) {
     this.successMessageSubject.next(message);
+    alert('Success: ' + message);
   }
 
   showError(message: string) {
     this.errorMessageSubject.next(message);
+    alert('Error: ' + message);
   }
 }

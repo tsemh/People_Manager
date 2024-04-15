@@ -11,7 +11,7 @@
          maxlength="30" formControlName="name" (keypress)="disablePressNumber($event, 'name')">
          <div *ngIf="peopleForm.get('name')?.errors && peopleForm.get('name')?.touched" class="text-danger">
           <div *ngIf="peopleForm.get('name')?.errors?.['required']">Name is required.</div>
-          <div *ngIf="peopleForm.get('name')?.errors?.['maxlength']">Name must be at most 30 characters long.</div>
+          <div *ngIf="peopleForm.get('name')?.errors?.['maxlength']">Name must be at most 100 characters long.</div>
           <div *ngIf="peopleForm.get('name')?.errors?.['minlength']">Name must be at least 3 characters long.</div>
         </div>
       </div>
@@ -34,6 +34,7 @@
         <div *ngIf="peopleForm.get('birthDate')?.touched && peopleForm.get('birthDate')?.errors" class="text-danger">
           <div *ngIf="peopleForm.get('birthDate')?.errors?.['required']">Birth Date is required.</div>
           <div *ngIf="peopleForm.get('birthDate')?.errors?.['maxlength']">Birth Date must be at most 10 characters long.</div>
+          <div *ngIf="peopleForm.get('birthDate')?.errors?.['minlength']">Birth Date must be at least 8 characters long.</div>
         </div>  
       </div>
 

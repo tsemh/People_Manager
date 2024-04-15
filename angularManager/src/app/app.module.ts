@@ -10,13 +10,15 @@ import { AddressFormComponent } from './view/address-form/address-form.component
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NavComponent } from './view/nav/nav.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DisplayComponent,
     FormComponent,
-    AddressFormComponent
+    AddressFormComponent,
+    NavComponent
   ],
   imports: [
     BrowserModule,

@@ -9,7 +9,7 @@ export class PeopleDTO {
 
   @IsNotEmpty()
   @IsString({message: "Name must be a string!"})
-  @Length(3, 30)
+  @Length(3, 100)
   readonly name: string;
 
   @IsNotEmpty()

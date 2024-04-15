@@ -10,13 +10,13 @@ export class FormService {
   public restrictedText: string[] = ['birthDate', 'cep', 'number'];
 
   constructor(private fb: FormBuilder) { }
-  
+
   createForm(): FormGroup {
     return this.fb.group({
       id: [0],
-      name: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      name: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       gender: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
-      birthDate: ['',[Validators.required, Validators.maxLength(10)]],
+      birthDate: ['',[Validators.required, Validators.minLength(10),Validators.maxLength(10)]],
       maritalStatus: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
       address: this.createAddressForm()
     });
@@ -25,10 +25,10 @@ export class FormService {
   private createAddressForm(): FormGroup {
     return this.fb.group({
       cep: ['',[Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
-      address: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      address: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       number: [0,[Validators.required, Validators.minLength(3), Validators.maxLength(5)]],
-      complement: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
-      neighborhood: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      complement: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      neighborhood: ['',[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       state: ['',[Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
       city: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]]
     });

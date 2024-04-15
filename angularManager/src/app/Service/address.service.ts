@@ -5,7 +5,6 @@ import { AddressModel } from '../Model/address.model';
 import { catchError } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
 import { AddressController } from './../Controller/address.controller';
-import { LoggerService } from './logger.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 
@@ -20,7 +19,6 @@ export class AddressService {
   constructor(
     private notificationService: NotificationService,
     private addressController: AddressController,
-    private loggerService: LoggerService
   ) { }
 
   get infoAddress(): any {
@@ -44,8 +42,6 @@ export class AddressService {
     this.addressController.update(addressId, addressInfo)
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          this.loggerService.handleError(error);
-          this.notificationService.showError('Erro ao atualizar endereço');
           return throwError(() => new Error ('Erro ao atualizar endereço'));
         })
       )
@@ -63,9 +59,8 @@ export class AddressService {
     this.addressController.post(newAddress, personId)
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          this.loggerService.handleError(error);
-          this.notificationService.showError('Erro ao criar novo endereço');
-          return throwError(() => new Error ('Erro ao criar novo endereço'));
+          this.notificationService.showError('Erro ao criar endereço');
+          return throwError(() => new Error ('Erro ao criar endereço'));
         })
       )
       .subscribe({
@@ -82,7 +77,6 @@ export class AddressService {
     this.addressController.delete(id)
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          this.loggerService.handleError(error);
           this.notificationService.showError('Erro ao excluir endereço');
           return throwError(() => new Error ('Erro ao excluir endereço'));
         })
@@ -99,7 +93,6 @@ export class AddressService {
     this.addressController.getById(id)
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          this.loggerService.handleError(error);
           this.notificationService.showError('Erro ao encontrar endereço pelo ID');
           return throwError(() => new Error ('Erro ao encontrar endereço pelo ID'));
         })

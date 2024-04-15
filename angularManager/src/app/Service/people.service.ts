@@ -20,7 +20,6 @@ export class PeopleService {
     private notificationService: NotificationService,
 
     private peopleController: PeopleController,
-    private addressController: AddressController,
     private logger: LoggerService) { }
 
   get idSelect():number {
@@ -45,22 +44,6 @@ export class PeopleService {
         console.error('Erro ao criar nova pessoa:', error);
       }
     });
-  }
-
-  updatePeopleAndAddress(peopleInfo: any, addressInfo: any, addressId: number) {
-    const peopleId = this.idSelect;
-
-    this.peopleController.update(peopleId, peopleInfo)
-      .subscribe({
-        next: (updatedPerson: PeopleModel | null) => {
-          if (updatedPerson !== null) {
-            this.addressController.update(addressId, addressInfo);
-          }
-        },
-        error: (error: any) => {
-          console.error('Erro ao atualizar pessoa:', error);
-        }
-      });
   }
 
   update(peopleInfo: any) {

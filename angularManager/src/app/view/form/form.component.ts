@@ -94,16 +94,25 @@ export class FormComponent implements OnInit {
   submitPeopleForm(template: TemplateRef<any>) {
     const peopleInfo = this.formService.grabInformationPeopleForm(this.peopleForm);
     const addressArray = [this.addressService.infoAddress]; 
-    const addressInfo: any = {...this.addressService.infoAddress};
-    addressInfo.number = Number(addressInfo.number);
+    console.log(addressArray)
+
   
     if (this.isEditMode()) {
-      this.updatePeopleAndAddress(peopleInfo, addressInfo);
+      this.setAddressOnService();
+      const addressUpdate = {...this.addressService.infoAddress};
+      this.AddressNumber(addressUpdate);
+      this.updatePeopleAndAddress(peopleInfo, addressUpdate);
     } else {
       if (this.isValidPeopleAndAddress(peopleInfo, addressArray[0], template)) {
+        const addressInfo = {...this.addressService.infoAddress};
+        this.AddressNumber(addressInfo);
         this.createOrUpdatePeople(peopleInfo, addressInfo);
       }
     }
+  }
+
+  AddressNumber(addressInfo: any) {
+    addressInfo.number = Number(addressInfo.number);
   }
   
   isEditMode(): boolean {
@@ -111,7 +120,8 @@ export class FormComponent implements OnInit {
   }
   
   updatePeopleAndAddress(peopleInfo: any, addressInfo: any) {
-    this.peopleService.updatePeopleAndAddress(peopleInfo, addressInfo, this.addressIdSelected);
+    this.updateAddress(addressInfo);
+    this.updatePeople(peopleInfo);
     window.location.reload();
   }
   
@@ -130,6 +140,7 @@ export class FormComponent implements OnInit {
   }
   
   createOrUpdatePeople(peopleInfo: any, addressInfo: any) {
+    this.AddressNumber(addressInfo);
     if (this.peopleService.idSelect && this.peopleService.idSelect !== 0) {
       this.peopleService.update(peopleInfo);
     } else {
@@ -147,7 +158,8 @@ export class FormComponent implements OnInit {
 
   submitAddressForm() {
     this.setAddressOnService();
-    const addressInfo = this.getAddressInfoFromForm();
+    const addressInfo = this.addressService.infoAddress;
+    this.AddressNumber(addressInfo);
     if (!this.isAddressInfoValid(addressInfo)) {
       alert("The address's information was not filled in correctly");
       return;
@@ -173,15 +185,21 @@ export class FormComponent implements OnInit {
     this.addressService.infoAddress = this.formService.grabInformationAddressForm(this.peopleForm);
   }
 
+  
   getAddressInfoFromForm(): any { //addresInfo
     return this.formService.grabInformationAddressForm(this.peopleForm);
   }
+  
  
   createAddress(addressInfo: any) { //addressInfo
     this.addressService.post(addressInfo, this.peopleService.idSelect);
   }
   updateAddress(addressInfo: any){ //addressInfo
     this.addressService.update(this.addressIdSelected, addressInfo)
+  }
+
+  updatePeople(addressInfo: any){ 
+    this.peopleService.update(addressInfo)
   }
   closeModalAndClearFields() {
     this.modalService.closeAddressModal();
