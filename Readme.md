@@ -46,7 +46,7 @@ Antes de iniciar, certifique-se de ter o Node.js e o npm instalados em sua máqu
 
 1. **Instalação das Dependências e Inicialização:**
   - path: ../nest-manager
-  - npm install -> npm start
+    - comando: npm install -> npm start
   - url: http://localhost:3000/
   - endpoints: 
     - address:
@@ -67,7 +67,7 @@ Antes de iniciar, certifique-se de ter o Node.js e o npm instalados em sua máqu
 
 1. **Instalação das Dependências e Inicialização:**
   - path: ../angularManager
-  - npm install -> npm start
+    - comando: npm install -> npm start
   - url: http://localhost:4200/display
 
 
