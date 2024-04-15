@@ -48,20 +48,20 @@ Antes de iniciar, certifique-se de ter o Node.js e o npm instalados em sua máqu
     path: ../nest-manager
     npm install -> npm start
     url: http://localhost:3000/
-    endpoints: 
-              address:
-                      GET ALL: http://localhost:3000/address
-                      GET BY ID: http://localhost:3000/address/{id}
-                      POST: http://localhost:3000/address/{personId}
-                      PATCH: http://localhost:3000/address/{id}
-                      DELETE: http://localhost:3000/address/{id}
+   - endpoints: 
+             - address:
+                      - GET ALL: http://localhost:3000/address
+                      - GET BY ID: http://localhost:3000/address/{id}
+                      - POST: http://localhost:3000/address/{personId}
+                      - PATCH: http://localhost:3000/address/{id}
+                      - DELETE: http://localhost:3000/address/{id}
               people:
-                      GET ALL: http://localhost:3000/people?page={page}&limit={limit}
-                      GET BY ID: http://localhost:3000/people/{id}
-                      SEARCH: http://localhost:3000/people/search?query={input}&page={page}&limit={limit}
-                      POST: http://localhost:3000/people
-                      PATCH: http://localhost:3000/people/{id}
-                      DELETE: http://localhost:3000/people/{id}
+                      - GET ALL: http://localhost:3000/people?page={page}&limit={limit}
+                      - GET BY ID: http://localhost:3000/people/{id}
+                      - SEARCH: http://localhost:3000/people/search?query={input}&page={page}&limit={limit}
+                      - POST: http://localhost:3000/people
+                      - PATCH: http://localhost:3000/people/{id}
+                      - DELETE: http://localhost:3000/people/{id}
 
   ### Configuração do Frontend (Node.js)
 
